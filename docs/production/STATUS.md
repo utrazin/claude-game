@@ -3,7 +3,7 @@
 **Leia isto primeiro em qualquer nova sessão.** Atualizado: 2026-11-25 (sessão 1, bloco 3).
 
 ## Fase atual
-Fase 3 — Prototyping. Protótipo v4 jogável: economia v0.4 (energia: peso, corda, regulador, rotor), pêndulo visível, céu com constelação Clavis clicável, áudio procedural, testes headless (18/18). Playtest 1 do Enzo respondido em D11–D14 (remontoir, presets gráficos, plano do céu, áudio v2). proto-v5: 61 FPS no Médio no PC do Enzo (D12 validado). proto-v6 com D15 enviada.
+Fase 3 — Prototyping. Protótipo v4 jogável: economia v0.4 (energia: peso, corda, regulador, rotor), pêndulo visível, céu com constelação Clavis clicável, áudio procedural, testes headless (18/18). Playtest 1 do Enzo respondido em D11–D14 (remontoir, presets gráficos, plano do céu, áudio v2). proto-v5: 61 FPS no Médio no PC do Enzo (D12 validado). proto-v6 com D15 e proto-v7 com UI v1 enviadas.
 
 ## Aprovado (não mudar sem registro em DECISIONS.md)
 - Conceito e visão: `docs/concept/V01-visao.md` (ASTRARIUM)
@@ -24,7 +24,7 @@ Fase 3 — Prototyping. Protótipo v4 jogável: economia v0.4 (energia: peso, co
 - Nenhum técnico. Performance real só pode ser medida na máquina do Enzo (container renderiza por software).
 
 ## Próximas ações
-1. Skin da UI conforme Art Bible §8 (odômetro de roletes, mostradores, etiquetas, chave de corda) — substitui o placeholder.
+1. UI v1 feita (proto-v7: `src/ui/hud.gd`, `gauge.gd`, texturas de `tools/ui/gen_ui.py`, fonte EB Garamond OFL). Falta: menu principal, opções, tutorial curto.
 2. Rotor de vento na cúpula; peso e corrente reais; manivela visível; textura de pedra em blocos.
 3. Constelação com magnitude e vizinhança (F4) e Polar aberta pelo mostrador (F2).
 4. Simulador v2 com planejador e Grande Ano; Lua em ≤15 min.
