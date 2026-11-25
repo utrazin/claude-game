@@ -1,7 +1,9 @@
 # GDD — ASTRARIUM
 
-Versão 0.1 · Estado: IN REVIEW (falta crítica independente do `game-design-critic`) · Dono: Game Design
-Balanceamento: `game/data/balance.json` (fonte única) · Simulador: `tools/sim/economy.py`
+Versão 0.2 · Estado: IN PROGRESS (respondendo à CRIT-01, decisão D10) · Dono: Game Design
+Balanceamento: `game/data/balance_v2.json` (modelo de energia) · Simulador: `tools/sim/economy_v2.py`
+
+> **v0.2:** a economia das seções 3–5 da v0.1 (relação × força × eficiência) foi substituída pelo **modelo de energia** da seção 5b. O jogo ainda roda a v0.1 até a reimplementação (T-002).
 
 ## 1. Resumo e loops
 
@@ -64,6 +66,32 @@ Checagem de órfãos: todos os recursos têm fonte, sumidouro e lugar no mundo. 
 - Luz Estelar/s: `Σ coef · nível · (tiques/s)^0,4`.
 - Estrelas: custo `15 · 2,3^n`; +50% aditivo cada; constelação de 7 dá ×2.
 - Offline: 100% da produção até o limite da reserva (1 h inicial, +1 h por nível).
+
+## 5b. Modelo de energia v0.4 (D10, substitui §5)
+
+Três peças físicas, cada uma com uma alavanca visível:
+
+| Peça | Alavanca (compra) | O que faz | No mundo |
+|---|---|---|---|
+| **Regulador** (escape + oscilador) | frequência alvo `f_reg = 0,5·1,22^n` batidas/s | define o ritmo do tique; cada batida exige um impulso `e = f_reg + Σ carga das complicações` | foliot → pêndulo cada vez mais curto; o som do tique acelera |
+| **Trem** (rodas) | dentes de cada roda; novos estágios | relação total `R = Π dentes/12`. Mais relação = o peso desce mais devagar (mais autonomia, mais velocidade sustentável com a mesma corda) **e** menos torque no escape | rodas crescem e se multiplicam |
+| **Peso motor** | massa (torque `3·1,45^n`) e profundidade do poço (energia, `30 + 30·n`) | amplitude `a = torque / (R·e)`; se `a < 1`, o regulador perde força: `f = f_reg·a²` | discos de chumbo; corrente descendo pelo poço |
+| **Corda** | manual (clique sobe o peso; segurar = 3/s) e **rotor de vento** automático (`1,0·1,3^n` /s) | enche o poço até a trava de corda | manivela; rotor girando na lanterna da cúpula |
+
+- Queda do peso: `v = f·1/R`. Com o poço vazio, o relógio só anda o que a corda repõe: `f ≤ corda·R`.
+- Produção: `Tiques/s = f · Y`; `Y` vem das complicações (mostrador ×2, Lua ×1,5, Mercúrio ×1,5, +25% por nível) e das estrelas.
+- Decisão real: a restrição que limita o relógio muda (amplitude, corda, regulador) e o jogador escolhe qual aliviar. Nenhuma regra fixa resolve as três.
+- Clique: enche o peso, mas a trava de corda limita. A vantagem do jogador ativo vem de manter um regulador mais rápido do que a corda automática sustenta.
+- Offline: o relógio roda com a energia do poço e depois na velocidade da corda automática. A autonomia é consequência do desenho do trem, não uma compra abstrata.
+
+Simulação v0.4 (`economy_v2.py`, 60 min):
+
+| Perfil | Mostrador | 2ª roda | Lua | 1ª constelação | Mercúrio | Produção final |
+|---|---|---|---|---|---|---|
+| ativo (3 cliques/s) | 3,3 | 5,6 | 16,1 | 25,8 | 30,3 | 1,05e5/s |
+| idle (só no início) | 4,2 | 6,5 | 17,0 | 27,0 | 32,2 | 8,2e5/s |
+
+Leitura: o idle não é punido (F3 resolvido). O ativo tem pior resultado porque a política gulosa do simulador subestima o rotor quando o jogador dá corda à mão, o que é uma limitação conhecida do simulador (F7). Pendências: Lua ainda depois dos 15 min; níveis de roda pouco comprados no perfil ativo; planejador com horizonte no lugar do guloso.
 
 ## 6. Grande Ano (prestígio)
 

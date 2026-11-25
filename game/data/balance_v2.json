@@ -1,0 +1,114 @@
+{
+  "_doc": "Economia v0.4 (modelo D10: regulador + trem + energia do peso). Lido pelo jogo e por tools/sim/economy_v2.py.",
+  "regulator": {
+    "f0": 0.5,
+    "growth": 1.22,
+    "cost0": 12,
+    "cost_growth": 1.55,
+    "_doc": "frequ\u00eancia alvo do regulador (batidas/s)"
+  },
+  "impulse": {
+    "e_per_hz": 1.0,
+    "_doc": "energia (torque) que o regulador exige por batida, cresce com a frequ\u00eancia"
+  },
+  "weight": {
+    "m0": 3.0,
+    "growth": 1.45,
+    "cost0": 10,
+    "cost_growth": 1.5,
+    "_doc": "torque do peso"
+  },
+  "shaft": {
+    "h0": 30.0,
+    "per_level": 30.0,
+    "cost0": 60,
+    "cost_growth": 2.2,
+    "_doc": "altura de queda (reserva de energia)"
+  },
+  "cord_per_beat": 1.0,
+  "pinion_teeth": 12,
+  "base_teeth": 24,
+  "teeth_per_level": 6,
+  "max_level": 17,
+  "stages": [
+    {
+      "id": "great_wheel",
+      "unlock": 0,
+      "cost0": 15,
+      "cost_growth": 1.35
+    },
+    {
+      "id": "center_wheel",
+      "unlock": 120,
+      "cost0": 80,
+      "cost_growth": 1.37
+    },
+    {
+      "id": "third_wheel",
+      "unlock": 2000.0,
+      "cost0": 1200.0,
+      "cost_growth": 1.39
+    },
+    {
+      "id": "fourth_wheel",
+      "unlock": 60000.0,
+      "cost0": 30000.0,
+      "cost_growth": 1.41
+    },
+    {
+      "id": "fifth_wheel",
+      "unlock": 2000000.0,
+      "cost0": 1000000.0,
+      "cost_growth": 1.43
+    }
+  ],
+  "winding": {
+    "per_click": 1.0,
+    "hold_rate": 3.0
+  },
+  "rotor": {
+    "w0": 1.0,
+    "growth": 1.3,
+    "unlock": 40,
+    "cost0": 50,
+    "cost_growth": 1.7,
+    "_doc": "rotor de vento na lanterna da c\u00fapula: corda autom\u00e1tica (altura/s)"
+  },
+  "yield0": 1.0,
+  "complications": [
+    {
+      "id": "hour_dial",
+      "cost": 60,
+      "yield_mult": 2.0,
+      "load": 0.0
+    },
+    {
+      "id": "moon",
+      "cost": 800,
+      "yield_mult": 1.5,
+      "load": 0.5,
+      "starlight": 0.05,
+      "level_cost0": 700,
+      "level_growth": 1.7,
+      "level_yield": 0.25
+    },
+    {
+      "id": "mercury",
+      "cost": 60000.0,
+      "yield_mult": 1.5,
+      "load": 1.5,
+      "starlight": 0.15,
+      "level_cost0": 50000.0,
+      "level_growth": 1.8,
+      "level_yield": 0.25
+    }
+  ],
+  "stars": {
+    "cost0": 10,
+    "growth": 1.9,
+    "yield_add": 0.35,
+    "constellation_size": 7,
+    "constellation_mult": 2.0
+  },
+  "starlight_exp": 0.5
+}
