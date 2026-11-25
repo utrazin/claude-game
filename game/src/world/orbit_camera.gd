@@ -55,7 +55,7 @@ func frame(box: AABB) -> void:
 	if not auto_frame:
 		return
 	_t_target = box.get_center() + Vector3(0, box.size.y * 0.22, 0)
-	var radius := maxf(box.size.length() * 0.5, 0.6)
+	var radius := maxf(box.size.length() * 0.5, 1.25)   # never frame tighter than the whole bench
 	_t_distance = clampf(radius / tan(deg_to_rad(fov * 0.5)) * 1.15, min_distance, max_distance)
 
 
@@ -85,6 +85,7 @@ func _process(delta: float) -> void:
 	var p := lerp_angle(_pitch_vis, pitch, k); _pitch_vis = p
 	var dir := Vector3(sin(yaw) * cos(p), sin(p), cos(yaw) * cos(p))
 	var orbit_pos := target + dir * distance
+	h_offset = distance * 0.085 * (1.0 - sky_blend)   # centre the clock in the area left free by the bench
 	if sky_blend <= 0.0001:
 		global_position = orbit_pos
 		look_at(target, Vector3.UP)

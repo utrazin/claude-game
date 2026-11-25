@@ -65,3 +65,8 @@ OPT_LANGUAGE,Language,Idioma
 OPT_FPS,Show FPS,Mostrar FPS
 OFF,Off,Desligado
 ON,On,Ligado
+COACH_WIND,"The weight is the clock's energy. Wind it: click, or hold to keep winding.","O peso é a energia do relógio. Dê corda: clique, ou segure para continuar."
+COACH_BUY,"Polished plates on the bench are parts you can afford. Fit one to the clock.","Etiquetas polidas na bancada são peças que você pode comprar. Monte uma no relógio."
+COACH_PREVIEW,"Hover a plate to preview the change before buying. The bench never sells a worse clock.","Passe o mouse numa etiqueta para ver a mudança antes de comprar. A bancada nunca vende um relógio pior."
+COACH_REMONTOIR,"The weight is full. Keep winding to charge the remontoir: the clock beats faster for a while.","O peso está cheio. Continue dando corda para carregar o remontoir: o relógio bate mais rápido por um tempo."
+COACH_SKY,"You have Starlight for a star. Look at the sky and click the pulsing one.","Você tem Luz Estelar para uma estrela. Olhe o céu e clique na que pulsa."

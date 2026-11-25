@@ -25,6 +25,7 @@ var shop: VBoxContainer
 var rows := {}          ## key -> {button, option, title, info, icon}
 var _refresh_t := 0.0
 var _hover := ""
+var _coach: Control
 
 const C_TEXT := Color(0.93, 0.90, 0.84)      ## cream #EDE6D6
 const C_INK := Color(0.20, 0.13, 0.07)       ## engraving on brass
@@ -52,6 +53,9 @@ func _ready() -> void:
 	lbl_fps = _label("", 15, C_DIM); lbl_fps.set_anchors_preset(Control.PRESET_CENTER_TOP)
 	lbl_fps.offset_left = -200; lbl_fps.offset_right = 200; lbl_fps.offset_top = 8
 	lbl_fps.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER; root.add_child(lbl_fps)
+	var coach := preload("res://src/ui/coach.gd").new(); coach.name = "Coach"; root.add_child(coach)
+	coach.setup(eco, self); _coach = coach
+	wind_pressed.connect(coach.on_wind)
 	eco.changed.connect(_refresh_shop)
 	Game.offline_report.connect(_show_offline)
 	_refresh_shop()
