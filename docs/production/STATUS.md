@@ -1,33 +1,34 @@
 # STATUS — documento central de continuidade
 
-**Leia isto primeiro em qualquer nova sessão.** Atualizado: 2026-11-25 (sessão 1).
+**Leia isto primeiro em qualquer nova sessão.** Atualizado: 2026-11-25 (sessão 1, fim do bloco 2).
 
 ## Fase atual
-Fase 2 — Pre-production (Fase 1 Discovery concluída). Protótipo técnico do core loop começando em paralelo.
+Fase 3 — Prototyping. Protótipo v0 jogável na Godot (economia v0.1). Economia sendo redesenhada (v0.4, modelo de energia) após a crítica CRIT-01.
 
 ## Aprovado (não mudar sem registro em DECISIONS.md)
 - Conceito e visão: `docs/concept/V01-visao.md` (ASTRARIUM)
-- Pesquisa de mercado: `docs/research/R01-mercado-idle.md` (APPROVED com ressalvas: itens marcados "não verificado")
-- Stack: Godot 4.7.2 Forward+, GDScript, Blender 5.3 (bpy) para modelos, unidades em metros, Y-up
-- Economia v0.3 como base de protótipo: `game/data/balance.json`
+- Pesquisa: `docs/research/R01-mercado-idle.md`
+- Referências de arte oficiais: `docs/art/approved/` (AST-CA-001 com ressalvas, 002, 003) e revisão `docs/art/REVIEW-AST-CA-001-003.md`
+- Stack: Godot 4.7.2 Forward+, GDScript, Blender 5.3 (bpy), metros, Y-up
+- Layout do trem horizontal (D09); modelo de energia (D10)
 
 ## Em andamento
-- GDD v0.1 (IN REVIEW, falta rodada do game-design-critic)
-- Art Bible v0 (BRIEFING; depende dos concepts AST-CA-001..003)
-- Protótipo Godot do core loop (IN PROGRESS)
+- T-002: reimplementar `game/src/core/economy.gd` com o modelo de energia de `balance_v2.json` (o jogo ainda usa `balance.json` v0.1)
+- Simulador v2: trocar política gulosa por planejador com horizonte; adicionar Grande Ano
+- Look-dev: latão aprovado provisoriamente (proto-v2); faltam texturas (escovado, gravuras), parede de pedra em blocos, crank visível, peso real
 
 ## Aguardando revisão / externo
-- GPT Image: AST-CA-001, 002, 003 enviados ao Enzo (`docs/art/GPT-IMAGE-REQUESTS.md`)
+- Nada pendente com o Enzo no momento. Próximo pedido previsto: mockup de UI da bancada (U-001) e textura de pedra calcária.
 
 ## Bloqueios
 - Nenhum técnico. Performance real só pode ser medida na máquina do Enzo (container renderiza por software).
 
 ## Próximas ações
-1. Protótipo jogável: trem de engrenagens procedural, peso, corda, compra, save/load, offline.
-2. Crítica independente do GDD.
-3. Avaliar concepts recebidos → Art Bible v1.
-4. Biblioteca de rodas (Blender) com bevel + materiais PBR calibrados.
-
+1. T-002 economia v0.4 no jogo + mostradores de amplitude/corda/autonomia (prévia diegética F7).
+2. Pêndulo/foliot visível no fim do trem; rotor de vento na cúpula; peso descendo de verdade.
+3. Constelação com magnitude e vizinhança (F4) e Polar aberta pelo mostrador (F2).
+4. Pedido U-001 (mockup da bancada) ao Enzo.
+5. Áudio: tique, engate, catraca (fontes licenciadas CC0 ou síntese própria).
 ## Como rodar
 - Jogo: `godot --path game` (editor: `godot -e --path game`)
 - Simulador: `python3 tools/sim/economy.py --profile active --minutes 75`
