@@ -27,6 +27,15 @@ func _ready() -> void:
 		Game.eco.from_dict(d)
 		Game.eco.purchased.emit("load", "")
 		Game.eco.changed.emit()
+	if args.has("qa"):   # open a specific panel for QA captures: gy | finale
+		await get_tree().create_timer(0.5).timeout
+		var hud: Node = get_tree().current_scene.get_node("HUD")
+		match args.qa:
+			"gy": hud.call("_confirm_great_year")
+			"finale":
+				for c in Game.eco.bal.sky.constellations:
+					for i in c.stars.size(): Game.eco.lit.append("%s:%d" % [c.id, i])
+				Game.eco.finale_seen = false; Game.eco.changed.emit()
 	if args.has("lookup"):
 		await get_tree().create_timer(0.3).timeout
 		get_tree().current_scene._on_look_up(true)

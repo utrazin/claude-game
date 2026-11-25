@@ -46,7 +46,7 @@ GFX_LOW,Graphics: Low,Gráficos: Baixo
 GFX_MEDIUM,Graphics: Medium,Gráficos: Médio
 GFX_HIGH,Graphics: High,Gráficos: Alto
 SKY_HINT,Click the pulsing star to light it with Starlight,Clique na estrela que pulsa para acendê-la com Luz Estelar
-NEEDS_WEIGHT,needs a heavier weight,precisa de um peso mais forte
+NEEDS_WEIGHT,weight too weak,peso fraco demais
 TAGLINE,A clockwork that winds the night sky,Um relógio que dá corda no céu noturno
 MENU_CONTINUE,Continue,Continuar
 MENU_START,Begin,Começar
@@ -78,3 +78,7 @@ GREAT_YEAR,The Great Year,O Grande Ano
 GY_INFO,+%d Aeons · the sky stays lit,+%d Éons · o céu continua aceso
 GY_BODY,"The heavens have turned once. Dismantle the machine and build it again, wiser: you gain %d Aeons (+%d%% yield, forever). Every lit star stays in the sky, and a new region of the dome opens.","O céu deu uma volta completa. Desmonte a máquina e construa de novo, mais sábio: você ganha %d Éons (+%d%% de rendimento, para sempre). Toda estrela acesa continua no céu, e uma nova região da cúpula se abre."
 GY_GO,Begin the Great Year,Começar o Grande Ano
+CONST_HOROLOGIUM,The Clock,O Relógio
+FINALE_TITLE,The Astrarium is complete,O Astrarium está completo
+FINALE_BODY,"Every star of the dome is lit, and the clock now keeps the time of the whole sky. It took %d Great Years and %s of patience. The tower will go on ticking: the Great Years continue, and the sky only grows brighter.","Todas as estrelas da cúpula estão acesas, e o relógio agora marca o tempo do céu inteiro. Foram %d Grandes Anos e %s de paciência. A torre continua tiquetaqueando: os Grandes Anos seguem, e o céu só fica mais claro."
+FINALE_OK,Keep watching the sky,Continuar observando o céu

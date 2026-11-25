@@ -68,6 +68,10 @@ func _init() -> void:
 	var expect_aeons := e.aeons_on_reset()
 	check(e.great_year_ready() and expect_aeons > 0 and e.do_great_year() == expect_aeons and e.levels[1] == 0 and e.lit == lit_before, "great year rebuilds the machine and keeps the sky")
 	check(e.star_reachable("ventus", 0), "a Great Year opens Ventus")
+	check(not e.star_reachable("horologium", 0), "Horologium waits for the Wind")
+	for c in e.bal.sky.constellations:
+		for i in c.stars.size(): if not ("%s:%d" % [c.id, i]) in e.lit: e.lit.append("%s:%d" % [c.id, i])
+	check(e.sky_complete(), "lighting every star completes the Astrarium")
 	var e4 := Economy.new(); e4.from_dict({"stars": 3})
 	check(e4.lit == ["clavis:0", "clavis:1", "clavis:2"], "v0.4 saves migrate star count to lit stars")
 	check(Num.fmt(1234567.0) == "1.23M", "number format")

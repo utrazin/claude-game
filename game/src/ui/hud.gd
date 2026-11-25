@@ -205,7 +205,7 @@ func _make_plate(key: String) -> Dictionary:
 	var v := VBoxContainer.new(); v.size_flags_horizontal = Control.SIZE_EXPAND_FILL; v.alignment = BoxContainer.ALIGNMENT_CENTER
 	v.add_theme_constant_override("separation", 0); v.mouse_filter = Control.MOUSE_FILTER_IGNORE; h.add_child(v)
 	var t := _label("", 23, C_INK, F_TITLE); t.clip_text = true; v.add_child(t)
-	var i := _label("", 17, C_INK, F_NUM); i.clip_text = true; v.add_child(i)
+	var i := _label("", 16, C_INK, F_NUM); i.clip_text = true; i.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS; v.add_child(i)
 	shop.add_child(b)
 	b.pressed.connect(func(): _buy(key))
 	b.mouse_entered.connect(func():
@@ -258,6 +258,25 @@ func _buy(key: String) -> void:
 	if rows[key].option.kind == "great_year":
 		_confirm_great_year(); return
 	eco.buy(rows[key].option)
+
+
+## D17: the finale. The sky is whole; the game goes on as an endless observatory.
+func _show_finale() -> void:
+	Audio.play("chime", -1.0, 0.75)
+	var p := _framed(); p.set_anchors_preset(Control.PRESET_CENTER)
+	p.offset_left = -380; p.offset_right = 380; p.offset_top = -190; p.offset_bottom = 190
+	var v := VBoxContainer.new(); v.add_theme_constant_override("separation", 14); p.add_child(v)
+	v.add_child(_shadowed(_label(tr("FINALE_TITLE"), 40, C_BRASS, F_TITLE)))
+	var body := _shadowed(_label(tr("FINALE_BODY") % [eco.great_years, Num.duration(eco.play_time)], 21, C_TEXT))
+	body.autowrap_mode = TextServer.AUTOWRAP_WORD; body.custom_minimum_size.x = 640; v.add_child(body)
+	var ok := Button.new(); ok.text = tr("FINALE_OK"); ok.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	ok.focus_mode = Control.FOCUS_NONE; ok.custom_minimum_size = Vector2(0, 64)
+	ok.add_theme_stylebox_override("normal", _nine("plate_polished", 26)); ok.add_theme_stylebox_override("pressed", _nine("plate_polished", 26))
+	ok.add_theme_stylebox_override("hover", _nine("plate_hover", 44, 0, 18))
+	ok.add_theme_font_override("font", F_TITLE); ok.add_theme_font_size_override("font_size", 24)
+	for c in ["font_color", "font_hover_color", "font_pressed_color"]: ok.add_theme_color_override(c, C_INK)
+	ok.pressed.connect(p.queue_free); v.add_child(ok)
+	get_child(0).add_child(p)
 
 
 ## F5: the Great Year rebuilds the machine with Aeons; the sky stays lit.
@@ -380,7 +399,7 @@ func _info(o: Dictionary) -> String:
 	if o.kind == "star": return tr("MAG") % eco.star_mag(o.id)
 	if eco.worsens(o): return tr("NEEDS_WEIGHT")
 	match o.kind:
-		"level": return tr("TEETH") % [eco.teeth(o.index), "%.1f" % eco.ratio(o.index)]
+		"level": return tr("TEETH") % [eco.teeth(o.index), "%.1f" % eco.ratio(o.index)] if eco.teeth(o.index) < 100 else "×%.1f" % eco.ratio(o.index)
 		"regulator": return "%.2f " % eco.f_reg() + tr("BEATS_PER_SEC")
 		"weight": return tr("TORQUE") + " " + Num.fmt(eco.torque())
 		"shaft": return tr("DEPTH") + " " + Num.fmt(eco.shaft_height())
@@ -407,6 +426,8 @@ func _process(delta: float) -> void:
 	if Settings.show_fps:
 		lbl_fps.text = "%d FPS  ·  %s (F10)" % [Engine.get_frames_per_second(), tr(Settings.NAMES[Settings.quality])]
 	_set_odometer(Num.fmt(eco.ticks))
+	if eco.sky_complete() and not eco.finale_seen:
+		eco.finale_seen = true; Game.save_game(); _show_finale()
 	lbl_rate.text = Num.fmt(eco.production()) + " " + tr("TICKS") + tr("PER_SEC") + "   ·   %.2f " % eco.beat_freq() + tr("BEATS_PER_SEC")
 	lbl_star.visible = eco.starlight_rate() > 0 or eco.starlight > 0
 	lbl_star.text = Num.fmt(eco.starlight) + " " + tr("STARLIGHT") + "  (+" + Num.fmt(eco.starlight_rate()) + tr("PER_SEC") + ")"

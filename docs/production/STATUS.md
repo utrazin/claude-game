@@ -3,6 +3,8 @@
 **Leia isto primeiro em qualquer nova sessão.** Atualizado: 2026-11-25 (sessão 1, bloco 3).
 
 ## Fase atual
+**2026-11-25, fim da sessão 1:** proto-v12, QA-01 APPROVED com ressalvas (`docs/qa/QA-01.md`). Próximo: Release Candidate (pedir FPS/áudio ao Enzo, fechar Q4–Q6, export Linux, página de loja). Merge/PR só com o OK do Enzo.
+
 Fase 3 — Prototyping. Protótipo v4 jogável: economia v0.4 (energia: peso, corda, regulador, rotor), pêndulo visível, céu com constelação Clavis clicável, áudio procedural, testes headless (18/18). Playtest 1 do Enzo respondido em D11–D14 (remontoir, presets gráficos, plano do céu, áudio v2). proto-v5: 61 FPS no Médio no PC do Enzo (D12 validado). proto-v6 com D15 e proto-v7 com UI v1 enviadas.
 
 ## Aprovado (não mudar sem registro em DECISIONS.md)

@@ -8,18 +8,19 @@ func _init() -> void:
 	var marks := {}
 	var dt := 0.5
 	var t := 0.0
-	while t < 3.0 * 3600.0:
+	while t < 8.0 * 3600.0 and not e.sky_complete():
 		e.hand_rate = 3.0 if fmod(t, 20.0) < 10.0 else 0.0
 		e.tick(dt); t += dt
 		if fmod(t, 2.0) < dt:
 			_shop(e)
 		for m in [["moon", e.comps.moon > 0], ["mercury", e.comps.mercury > 0], ["clavis", e.complete("clavis")],
-				["rota", e.complete("rota")], ["great_year_1", e.great_years >= 1], ["ventus", e.complete("ventus")]]:
+				["rota", e.complete("rota")], ["great_year_1", e.great_years >= 1], ["ventus", e.complete("ventus")],
+				["horologium", e.complete("horologium")], ["great_year_2", e.great_years >= 2], ["great_year_3", e.great_years >= 3]]:
 			if m[1] and not marks.has(m[0]):
 				marks[m[0]] = t; print("%-13s at %5.1f min   prod=%s/s  stars=%d" % [m[0], t / 60.0, Num.fmt(e.production()), e.stars])
-		if e.great_year_ready() and e.great_years == 0:
-			print("great year: +%d aeons" % e.do_great_year())
-	print("END 3h: prod=%s/s stars=%d aeons=%d gy=%d" % [Num.fmt(e.production()), e.stars, e.aeons, e.great_years])
+		if e.great_year_ready() and e.aeons_on_reset() >= maxi(3, e.aeons):   # reset when it at least doubles Aeons
+			print("great year at %.1f min: +%d aeons" % [t / 60.0, e.do_great_year()])
+	print("END %.1f h:" % (t / 3600.0), " prod=%s/s stars=%d aeons=%d gy=%d" % [Num.fmt(e.production()), e.stars, e.aeons, e.great_years])
 	quit()
 
 

@@ -31,6 +31,7 @@ var hand_rate := 0.0            ## winding supplied by the player this frame (he
 var boost := 0.0                ## remontoir charge (s): hand winding past the stopwork speeds the beat
 var aeons := 0
 var great_years := 0
+var finale_seen := false
 var play_time := 0.0
 var _f_now := 0.0
 
@@ -244,12 +245,19 @@ func gate_open(c: Dictionary) -> bool:
 		"moon": return comps.get("moon", 0) > 0
 		"mercury": return comps.get("mercury", 0) > 0
 		"great_year": return great_years > 0
+		"ventus_complete": return complete("ventus")
 	return true
 
 func complete(cid: String) -> bool:
 	var c := constellation(cid)
 	for i in c.stars.size():
 		if not ("%s:%d" % [cid, i]) in lit: return false
+	return true
+
+## Finale (D17): every constellation of the sky is lit — the Astrarium is complete.
+func sky_complete() -> bool:
+	for c in bal.sky.constellations:
+		if not complete(c.id): return false
 	return true
 
 ## Product of the bonuses of completed constellations of a given type (1.0 = none).
@@ -346,7 +354,7 @@ func great_year_ready() -> bool:
 	return complete("clavis") and comps.get("mercury", 0) > 0
 
 func aeons_on_reset() -> int:
-	return int(floor(sqrt(total_starlight / float(bal.get("great_year", {}).get("aeon_div", 50.0)))))
+	return int(floor(pow(total_starlight / float(bal.get("great_year", {}).get("aeon_div", 50.0)), 1.0 / 3.0)))   # cube root: Aeons must not run away (QA-01)
 
 func do_great_year() -> int:
 	var g := aeons_on_reset()
@@ -361,7 +369,7 @@ func to_dict() -> Dictionary:
 	return {"v": 2, "ticks": ticks, "starlight": starlight, "total_ticks": total_ticks,
 		"total_starlight": total_starlight, "levels": levels.duplicate(), "regulator": regulator,
 		"weight": weight, "shaft": shaft, "rotor": rotor, "comps": comps.duplicate(), "lit": lit.duplicate(),
-		"height": height, "aeons": aeons, "great_years": great_years, "play_time": play_time}
+		"height": height, "aeons": aeons, "great_years": great_years, "play_time": play_time, "finale_seen": finale_seen}
 
 func from_dict(d: Dictionary) -> void:
 	reset_run()
@@ -389,3 +397,4 @@ func from_dict(d: Dictionary) -> void:
 	height = clampf(float(d.get("height", shaft_height())), 0.0, shaft_height())
 	aeons = maxi(0, int(d.get("aeons", 0))); great_years = maxi(0, int(d.get("great_years", 0)))
 	play_time = float(d.get("play_time", 0.0))
+	finale_seen = bool(d.get("finale_seen", false))
