@@ -5,11 +5,11 @@
     "growth": 1.22,
     "cost0": 12,
     "cost_growth": 1.55,
-    "_doc": "frequ\u00eancia alvo do regulador (batidas/s)"
+    "_doc": "frequência alvo do regulador (batidas/s)"
   },
   "impulse": {
     "e_per_hz": 1.0,
-    "_doc": "energia (torque) que o regulador exige por batida, cresce com a frequ\u00eancia"
+    "_doc": "energia (torque) que o regulador exige por batida, cresce com a frequência"
   },
   "weight": {
     "m0": 3.0,
@@ -64,15 +64,20 @@
   ],
   "winding": {
     "per_click": 1.0,
-    "hold_rate": 3.0
+    "hold_rate": 3.0,
+    "boost_per_click": 1.2,
+    "boost_hold_rate": 3.0,
+    "boost_max": 12.0,
+    "boost_mult": 0.6,
+    "_doc_boost": "remontoir: com o peso no topo, dar corda carrega a mola de força constante: +60% de batidas enquanto durar (segundos, teto 12)"
   },
   "rotor": {
     "w0": 1.0,
     "growth": 1.3,
-    "unlock": 40,
+    "unlock": 250,
     "cost0": 50,
     "cost_growth": 1.7,
-    "_doc": "rotor de vento na lanterna da c\u00fapula: corda autom\u00e1tica (altura/s)"
+    "_doc": "rotor de vento na lanterna da cúpula: corda automática (altura/s)"
   },
   "yield0": 1.0,
   "complications": [

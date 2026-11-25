@@ -13,6 +13,10 @@ var lbl_star: Label
 var lbl_eff: Label
 var lbl_reserve: Label
 var bar_reserve: ProgressBar
+var lbl_fps: Label
+var _side: Control
+var _wind: Control
+var _hint: Label
 var lbl_preview: Label
 var shop: VBoxContainer
 var rows := {}          ## key -> {button, name, info}
@@ -43,7 +47,7 @@ func _ready() -> void:
 	tv.add_child(bar_reserve)
 	lbl_preview = _label("", 15, Color(0.75, 0.82, 1.0)); tv.add_child(lbl_preview)
 	# ---- right: bench shop
-	var side := _panel(); side.set_anchors_preset(Control.PRESET_RIGHT_WIDE)
+	var side := _panel(); _side = side; side.set_anchors_preset(Control.PRESET_RIGHT_WIDE)
 	side.offset_left = -440; side.offset_right = -24; side.offset_top = 24; side.offset_bottom = -24
 	root.add_child(side)
 	var sv := VBoxContainer.new(); sv.add_theme_constant_override("separation", 10); side.add_child(sv)
@@ -56,18 +60,21 @@ func _ready() -> void:
 	var wind := Button.new(); wind.text = tr("WIND"); wind.custom_minimum_size = Vector2(260, 64)
 	wind.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
 	wind.offset_left = -130; wind.offset_right = 130; wind.offset_top = -110; wind.offset_bottom = -46
-	_style_button(wind, 26); root.add_child(wind)
+	_style_button(wind, 26); root.add_child(wind); _wind = wind
 	wind.button_down.connect(func(): wind_pressed.emit(); wind_hold.emit(true))
 	wind.button_up.connect(func(): wind_hold.emit(false))
 	var hint := _label(tr("WIND_HINT"), 15, C_DIM); hint.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
 	hint.offset_left = -200; hint.offset_right = 200; hint.offset_top = -40; hint.offset_bottom = -16
-	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER; root.add_child(hint)
+	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER; root.add_child(hint); _hint = hint
 	var sky := Button.new(); sky.toggle_mode = true; sky.text = tr("LOOK_UP")
 	sky.custom_minimum_size = Vector2(200, 48); _style_button(sky, 18)
 	sky.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
 	sky.offset_left = 28; sky.offset_right = 228; sky.offset_top = -86; sky.offset_bottom = -38
 	sky.toggled.connect(func(on): look_up.emit(on); sky.text = tr("LOOK_DOWN") if on else tr("LOOK_UP"))
 	root.add_child(sky)
+	lbl_fps = _label("", 15, C_DIM); lbl_fps.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	lbl_fps.offset_left = -200; lbl_fps.offset_right = 200; lbl_fps.offset_top = 8
+	lbl_fps.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER; root.add_child(lbl_fps)
 	eco.changed.connect(_refresh_shop)
 	Game.offline_report.connect(_show_offline)
 	_refresh_shop()
@@ -200,6 +207,9 @@ func _buy(key: String) -> void:
 
 
 func _process(delta: float) -> void:
+	lbl_fps.visible = Settings.show_fps
+	if Settings.show_fps:
+		lbl_fps.text = "%d FPS  ·  %s (F10)" % [Engine.get_frames_per_second(), tr(Settings.NAMES[Settings.quality])]
 	lbl_ticks.text = Num.fmt(eco.ticks) + "  " + tr("TICKS")
 	lbl_rate.text = Num.fmt(eco.production()) + " " + tr("TICKS") + tr("PER_SEC") + "   ·   %.2f " % eco.beat_freq() + tr("BEATS_PER_SEC")
 	lbl_star.visible = eco.starlight_rate() > 0 or eco.starlight > 0
@@ -207,6 +217,8 @@ func _process(delta: float) -> void:
 	lbl_eff.text = tr("AMPLITUDE") + " %d%%   ·   " % int(minf(eco.amplitude(), 9.99) * 100) + tr("LIMIT_" + eco.bottleneck())
 	var au := eco.autonomy()
 	lbl_reserve.text = tr("RESERVE") + "  " + ("∞" if is_inf(au) else Num.duration(au))
+	if eco.boost > 0.0:
+		lbl_reserve.text += "   ·   " + tr("REMONTOIR") % ["%+d%%" % int((eco.boost_factor() - 1.0) * 100.0), "%.0f" % ceilf(eco.boost)]
 	bar_reserve.max_value = eco.shaft_height(); bar_reserve.value = eco.height
 	lbl_preview.text = _preview_text(rows[_hover].option) if rows.has(_hover) else ""
 	_refresh_t += delta
@@ -226,3 +238,12 @@ func _show_offline(rep: Dictionary) -> void:
 	var ok := Button.new(); ok.text = "OK"; _style_button(ok, 20); v.add_child(ok)
 	ok.pressed.connect(p.queue_free)
 	get_child(0).add_child(p)
+
+
+## Observatory shot: the bench slides away, winding is hidden, the hint points at the sky.
+func sky_progress(b: float) -> void:
+	var k := smoothstep(0.1, 0.6, b)
+	_side.modulate.a = 1.0 - k; _side.position.x = get_viewport().get_visible_rect().size.x - 440.0 + 200.0 * k
+	_side.visible = k < 0.99
+	_wind.modulate.a = 1.0 - k; _wind.visible = k < 0.99
+	_hint.text = tr("SKY_HINT") if b > 0.5 else tr("WIND_HINT")

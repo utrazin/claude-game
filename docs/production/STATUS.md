@@ -3,7 +3,7 @@
 **Leia isto primeiro em qualquer nova sessão.** Atualizado: 2026-11-25 (sessão 1, bloco 3).
 
 ## Fase atual
-Fase 3 — Prototyping. Protótipo v4 jogável: economia v0.4 (energia: peso, corda, regulador, rotor), pêndulo visível, céu com constelação Clavis clicável, áudio procedural, testes headless (18/18). Build Windows exportada para teste de desempenho/áudio na máquina do Enzo.
+Fase 3 — Prototyping. Protótipo v4 jogável: economia v0.4 (energia: peso, corda, regulador, rotor), pêndulo visível, céu com constelação Clavis clicável, áudio procedural, testes headless (18/18). Playtest 1 do Enzo respondido em D11–D14 (remontoir, presets gráficos, plano do céu, áudio v2). Build proto-v5 enviada para reteste.
 
 ## Aprovado (não mudar sem registro em DECISIONS.md)
 - Conceito e visão: `docs/concept/V01-visao.md` (ASTRARIUM)
@@ -18,7 +18,7 @@ Fase 3 — Prototyping. Protótipo v4 jogável: economia v0.4 (energia: peso, co
 - Look-dev: latão aprovado provisoriamente (proto-v2); faltam texturas (escovado, gravuras), parede de pedra em blocos, crank visível, peso real
 
 ## Aguardando revisão / externo
-- Enzo: rodar `Astrarium-proto-v4.exe` (em /mnt/project-files/astrarium/) e informar FPS, GPU e impressão do áudio.
+- Enzo: reteste da `Astrarium-proto-v5.zip` (FPS com F3, áudio, plano do céu). Playtest 1: 20 FPS em Ryzen integrado, áudio "meia boca", céu "transição de navegador", corda parou de responder após a 4ª compra.
 
 ## Bloqueios
 - Nenhum técnico. Performance real só pode ser medida na máquina do Enzo (container renderiza por software).

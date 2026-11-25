@@ -26,6 +26,7 @@ var comps := {}
 var stars := 0
 var height := 0.0               ## current weight height (energy in the shaft)
 var hand_rate := 0.0            ## winding supplied by the player this frame (height/s)
+var boost := 0.0                ## remontoir charge (s): hand winding past the stopwork speeds the beat
 var aeons := 0
 var great_years := 0
 var play_time := 0.0
@@ -86,7 +87,11 @@ func f_sustained() -> float: return minf(f_amp(), winding() * train_ratio() / ba
 
 ## Actual beat frequency right now.
 func beat_freq() -> float:
-	return f_amp() if height > 1e-6 else f_sustained()
+	return (f_amp() if height > 1e-6 else f_sustained()) * boost_factor()
+
+## Remontoir overdrive: active only while the weight still has height to give.
+func boost_factor() -> float:
+	return 1.0 + float(bal.winding.get("boost_mult", 0.0)) if boost > 0.0 and height > 1e-6 else 1.0
 
 func yield_per_beat() -> float:
 	var y: float = bal.yield0
@@ -136,11 +141,19 @@ func tick(dt: float) -> void:
 	starlight += s; total_starlight += s
 	play_time += dt
 	_f_now = f
+	var wb: Dictionary = bal.winding
+	if hand_rate > 0.0 and is_fully_wound():
+		boost = minf(float(wb.get("boost_max", 0.0)), boost + float(wb.get("boost_hold_rate", 0.0)) * dt)
+	boost = maxf(0.0, boost - dt)
 
 
-## One click of the crank: raises the weight (the stopwork stops it at the top).
+## One click of the crank: raises the weight; at the stopwork it charges the remontoir instead.
+## Returns height gained (0 when the click went into the remontoir).
 func wind() -> float:
 	var before := height
+	if is_fully_wound():
+		var wb: Dictionary = bal.winding
+		boost = minf(float(wb.get("boost_max", 0.0)), boost + float(wb.get("boost_per_click", 0.0)))
 	height = minf(shaft_height(), height + bal.winding.per_click)
 	changed.emit()
 	return height - before
@@ -151,7 +164,7 @@ func is_fully_wound() -> bool: return height >= shaft_height() - 1e-6
 
 ## Offline: run on stored energy, then at the automatic winding speed. Analytical.
 func apply_offline(seconds: float) -> Dictionary:
-	var hr := hand_rate; hand_rate = 0.0
+	var hr := hand_rate; hand_rate = 0.0; boost = 0.0
 	var s := maxf(seconds, 0.0)
 	var y := yield_per_beat()
 	var fa := f_amp(); var R := train_ratio(); var w := rotor_rate()

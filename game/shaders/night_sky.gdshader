@@ -7,6 +7,7 @@ uniform vec3 horizon : source_color = vec3(0.04, 0.055, 0.11);
 uniform vec3 ground : source_color = vec3(0.02, 0.015, 0.012);
 uniform float awake : hint_range(0.0, 1.0) = 0.15;
 uniform float star_density = 260.0;
+uniform float star_gain = 1.0; // observatory shot: eyes adapted to the dark
 
 float hash(vec3 p) {
 	p = fract(p * 0.3183099 + 0.1);
@@ -36,13 +37,13 @@ void sky() {
 		vec3 n = normalize(vec3(0.35, 0.25, 0.9));
 		float band = exp(-pow(dot(d, n) * 4.0, 2.0));
 		float grain = hash(floor(d * 400.0));
-		col += vec3(0.08, 0.09, 0.16) * band * (0.6 + 0.4 * grain) * awake * smoothstep(-0.05, 0.2, up);
+		col += vec3(0.08, 0.09, 0.16) * band * (0.88 + 0.12 * grain) * awake * (0.6 + 0.4 * star_gain) * smoothstep(-0.05, 0.2, up);
 		// stars: faint ones always (dim), bright ones appear with awake
 		float s1 = stars(d, star_density, 1.0 - 0.06);
 		float s2 = stars(d, star_density * 0.5, 1.0 - 0.10 * awake);
 		float tw = 0.75 + 0.25 * sin(TIME * 2.0 + hash(floor(d * star_density)) * 30.0);
-		col += vec3(0.85, 0.88, 1.0) * s1 * 0.25 * smoothstep(0.0, 0.15, up);
-		col += vec3(1.0, 0.92, 0.75) * s2 * 3.0 * tw * awake * smoothstep(0.0, 0.15, up);
+		col += vec3(0.85, 0.88, 1.0) * s1 * 0.2 * sqrt(star_gain) * smoothstep(0.0, 0.15, up);
+		col += vec3(1.0, 0.92, 0.75) * s2 * 3.0 * tw * awake * star_gain * smoothstep(0.0, 0.15, up);
 	}
 	COLOR = col;
 }

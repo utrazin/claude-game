@@ -10,6 +10,7 @@ const STARS := [[-20, 58], [-8, 63], [6, 61], [14, 54], [-2, 70], [-14, 74], [20
 const EDGES := [[0, 1], [1, 2], [2, 3], [1, 4], [4, 5], [2, 6]]
 
 var eco: Economy
+var focus := 0.0   ## 0..1 during the observatory shot: lines and stars brighten
 var base_y := 5.5
 var nodes: Array[MeshInstance3D] = []
 var lines: Array[MeshInstance3D] = []
@@ -23,7 +24,7 @@ func setup(e: Economy, y: float) -> void:
 	eco = e; base_y = y
 	_lit_m = _emit(Color(1.0, 0.86, 0.55), 9.0)
 	_avail_m = _emit(Color(0.7, 0.78, 1.0), 2.5)
-	_dim_m = _emit(Color(0.4, 0.45, 0.6), 0.4)
+	_dim_m = _emit(Color(0.6, 0.68, 0.95), 3.0)
 	_line_m = _emit(Color(0.95, 0.75, 0.4), 2.2)
 	for i in STARS.size():
 		var mi := MeshInstance3D.new(); var sm := SphereMesh.new(); sm.radius = 0.045; sm.height = 0.09
@@ -38,6 +39,12 @@ func setup(e: Economy, y: float) -> void:
 		ln.look_at_from_position((a + b) * 0.5, b, Vector3.UP); lines.append(ln)
 	eco.changed.connect(refresh)
 	refresh()
+
+
+func centre() -> Vector3:
+	var c := Vector3.ZERO
+	for i in STARS.size(): c += _pos(i)
+	return c / STARS.size()
 
 
 func _emit(c: Color, energy: float) -> StandardMaterial3D:
@@ -87,6 +94,7 @@ func _on_star_input(_cam: Node, event: InputEvent, _pos3: Vector3, _n: Vector3, 
 
 func _process(_d: float) -> void:
 	var t := Time.get_ticks_msec() * 0.001
+	if _line_m: _line_m.emission_energy_multiplier = 2.2 * (1.0 + 1.5 * focus)
 	var nxt := next_star()
 	if nxt >= 0 and nxt < nodes.size() and not lit(nxt):
 		nodes[nxt].scale = Vector3.ONE * (1.15 + 0.15 * sin(t * 3.0))

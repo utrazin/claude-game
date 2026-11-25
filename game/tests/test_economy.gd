@@ -21,6 +21,10 @@ func _init() -> void:
 	check(e.wind() > 0.0 and e.beat_freq() > 0.0, "winding restarts the clock")
 	e.height = e.shaft_height()
 	check(e.wind() == 0.0, "stopwork: cannot overwind")
+	var fb := e.beat_freq() / e.boost_factor()
+	check(e.boost > 0.0 and e.beat_freq() > fb * 1.5, "winding past the stopwork charges the remontoir (faster beat)")
+	for i in 200: e.tick(0.1)
+	check(e.boost == 0.0, "remontoir runs down")
 	# ratio vs amplitude
 	e.ticks = 1e12
 	var a0 := e.amplitude()

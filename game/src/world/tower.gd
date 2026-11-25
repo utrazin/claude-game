@@ -37,7 +37,9 @@ func _ready() -> void:
 	var hud := preload("res://src/ui/hud.gd").new(); hud.name = "HUD"; add_child(hud)
 	hud.wind_pressed.connect(_on_wind)
 	hud.wind_hold.connect(func(h): _holding = h)
-	hud.look_up.connect(func(up): cam.look_up(up))
+	hud.look_up.connect(_on_look_up)
+	cam.sky_focus = sky_chart.centre()
+	cam.sky_shot.connect(_on_sky_shot)
 
 
 func _build_environment() -> void:
@@ -46,9 +48,13 @@ func _build_environment() -> void:
 	var sky := Sky.new(); var ps := ShaderMaterial.new(); ps.shader = preload("res://shaders/night_sky.gdshader")
 	sky_mat = ps
 	sky.sky_material = ps; env.sky = sky
-	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
+	# The sky shader animates (twinkle), which would re-bake sky radiance every frame.
+	# Lighting therefore comes from a flat ambient colour + the room reflection probe; the sky is backdrop only.
+	sky.radiance_size = Sky.RADIANCE_SIZE_32
+	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	env.ambient_light_color = Color(0.20, 0.22, 0.32)
 	env.ambient_light_energy = 0.5
-	env.reflected_light_source = Environment.REFLECTION_SOURCE_SKY
+	env.reflected_light_source = Environment.REFLECTION_SOURCE_DISABLED
 	env.tonemap_mode = Environment.TONE_MAPPER_AGX
 	env.tonemap_exposure = 1.1
 	env.ssao_enabled = true; env.ssao_radius = 0.6; env.ssao_intensity = 1.6
@@ -57,6 +63,7 @@ func _build_environment() -> void:
 	env.fog_enabled = true; env.fog_density = 0.012; env.fog_light_color = Color(0.12, 0.1, 0.12); env.fog_sky_affect = 0.0
 	env.adjustment_enabled = true; env.adjustment_saturation = 1.05; env.adjustment_contrast = 1.06
 	var we := WorldEnvironment.new(); we.environment = env; add_child(we)
+	Settings.apply_environment(env)
 	var probe := ReflectionProbe.new(); probe.name = "RoomProbe"; probe.size = Vector3(12, 8, 12)
 	probe.position = Vector3(0, 2.5, 0); probe.box_projection = true; probe.interior = true
 	probe.update_mode = ReflectionProbe.UPDATE_ONCE; add_child(probe)
@@ -68,7 +75,10 @@ func _build_environment() -> void:
 	# cool moonlight from the dome (rim)
 	var moon := DirectionalLight3D.new(); moon.name = "Moonlight"; add_child(moon)
 	moon.rotation_degrees = Vector3(-62, 160, 0); moon.light_color = Color(0.55, 0.68, 1.0)
-	moon.light_energy = 0.55; moon.shadow_enabled = true
+	moon.light_energy = 0.55
+	Settings.shadows_for(moon, false)
+	Settings.changed.connect(func():
+		Settings.apply_environment(env); Settings.shadows_for(moon, false))
 	# candle fill near the bench
 	var fill := OmniLight3D.new(); fill.name = "Candle"; add_child(fill)
 	fill.position = Vector3(1.6, 1.2, 1.4); fill.light_color = Color(1.0, 0.6, 0.3); fill.light_energy = 0.6; fill.omni_range = 4.0
@@ -121,7 +131,7 @@ func _refresh_weight() -> void:
 
 
 func _on_wind() -> void:
-	if eco.wind() > 0.0:
+	if eco.wind() > 0.0 or eco.boost > 0.0:
 		_crank_spin += TAU * 0.25
 		Audio.wind_click(false)
 	else:
@@ -129,7 +139,7 @@ func _on_wind() -> void:
 
 
 func _process(delta: float) -> void:
-	if _holding and not eco.is_fully_wound():
+	if _holding and (not eco.is_fully_wound() or eco.boost < eco.bal.winding.boost_max - 0.05):
 		eco.hand_rate = eco.bal.winding.hold_rate
 		_crank_spin += delta * TAU * 1.2
 		_ratchet_t += delta
@@ -150,3 +160,25 @@ func _process(delta: float) -> void:
 		# the weight hangs from the great wheel barrel and falls as energy is spent
 		var frac := eco.height / eco.shaft_height()
 		weight.position = mech.position + Vector3(-r0 - 0.95, lerpf(-0.2, mech.arbors[0].position.y - 0.2, frac), 0.05)
+
+
+## --- Observatory shot: lamps dim (eyes adjusting to the dark), the sky gains depth,
+## the constellation brightens. Driven by the camera's crane progress (0..1).
+var _lamp_base := {}
+
+func _on_look_up(up: bool) -> void:
+	if _lamp_base.is_empty():
+		for l in find_children("*", "Light3D", true, false):
+			if not (l is DirectionalLight3D):
+				_lamp_base[l] = (l as Light3D).light_energy
+	Audio.sky_move(up)
+	cam.look_up(up)
+
+
+func _on_sky_shot(b: float) -> void:
+	var dim := 1.0 - 0.72 * smoothstep(0.0, 0.7, b)
+	for l in _lamp_base:
+		if is_instance_valid(l): (l as Light3D).light_energy = _lamp_base[l] * dim
+	if sky_mat: sky_mat.set_shader_parameter("star_gain", 1.0 + 1.6 * smoothstep(0.45, 1.0, b))
+	sky_chart.focus = smoothstep(0.5, 1.0, b)
+	(get_node("HUD") as Node).call("sky_progress", b)

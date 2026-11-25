@@ -90,7 +90,8 @@ func _dome() -> void:
 			var p0 := Vector3(cos(a) * cos(e0), sin(e0), sin(a) * cos(e0)) * (RADIUS - 0.02)
 			var p1 := Vector3(cos(a) * cos(e1), sin(e1), sin(a) * cos(e1)) * (RADIUS - 0.02)
 			var seg := MeshInstance3D.new(); var b := BoxMesh.new()
-			b.size = Vector3(0.07, p0.distance_to(p1) + 0.02, 0.1); seg.mesh = b; seg.material_override = iron
+			b.size = Vector3(0.045, p0.distance_to(p1) + 0.02, 0.08); seg.mesh = b; seg.material_override = iron
+			seg.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 			add_child(seg)
 			seg.position = Vector3(0, WALL_H, 0) + (p0 + p1) * 0.5
 			seg.look_at_from_position(seg.position, seg.position + (p1 - p0), (p0 + p1).normalized())

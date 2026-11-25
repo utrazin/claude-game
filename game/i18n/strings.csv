@@ -5,7 +5,7 @@ PER_SEC,/s,/s
 EFFICIENCY,Efficiency,Eficiência
 POWER_LOAD,Power %s · Load %s,Força %s · Carga %s
 WIND,Wind,Dar corda
-WIND_HINT,Click to raise the weight · hold to keep winding,Clique para subir o peso · segure para continuar dando corda
+WIND_HINT,Wind to raise the weight · when full it charges the remontoir,Dê corda para subir o peso · cheio, carrega o remontoir
 OVERWIND,Overwind,Sobrecorda
 BENCH,The Bench,A Bancada
 STAGE_great_wheel,Great Wheel,Roda Grande
@@ -41,3 +41,8 @@ LIMIT_amplitude,weight too light for the train,peso fraco para o trem
 LIMIT_winding,limited by winding,limitado pela corda
 PREVIEW,"After: production %s · amplitude %s","Depois: produção %s · amplitude %s"
 WARN_AMP,the train will drag,o trem vai arrastar
+REMONTOIR,"Remontoir %s (%ss)","Remontoir %s (%ss)"
+GFX_LOW,Graphics: Low,Gráficos: Baixo
+GFX_MEDIUM,Graphics: Medium,Gráficos: Médio
+GFX_HIGH,Graphics: High,Gráficos: Alto
+SKY_HINT,Click the pulsing star to light it with Starlight,Clique na estrela que pulsa para acendê-la com Luz Estelar
