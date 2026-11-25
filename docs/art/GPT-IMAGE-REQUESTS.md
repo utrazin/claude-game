@@ -76,3 +76,25 @@ Material study sheet for a premium game, six objects arranged in a clean 3x2 gri
 ```
 Four-panel progression strip of the same scene from the identical camera angle, side by side, separated by thin dark dividers. The scene: the top chamber of an ancient circular stone observatory tower with a wrought iron and glass dome. Panel 1 "silence": dark dusty room, a single brass clock wheel lying on a walnut workbench, one candle lit, dome closed, no stars. Panel 2 "first tick": a small train of five brass gears with heat-blued steel pinions mounted on a walnut base, a pendulum, a few oil lamps lit, a narrow slit of the dome open showing a few stars. Panel 3 "living machine": a 2 meter tall clockwork mechanism with several cream enamel dials and the first slender brass planetary arm holding a silver moon, half of the dome open, one constellation glowing. Panel 4 "firmament": a monumental astronomical clockwork reaching the ceiling, many planets of lapis lazuli, amber and silver orbiting on brass arms, the dome fully open to a deep ultramarine sky full of stars with constellations traced by fine golden lines. The color temperature goes from cold and dim in panel 1 to warm and luminous in panel 4. Premium stylized realism, museum diorama at night, crisp brass highlights, fine engravings. No steampunk, no steam, no pipes, no neon, no low poly, no people, no text. 21:9.
 ```
+
+---
+
+## AST-UI-001 — Mockup da interface (a Bancada e o Odômetro)
+
+- **Estado:** BRIEFING
+- **Objetivo:** definir a linguagem visual da UI antes de consolidá-la. A UI atual do protótipo é placeholder (caixas marrons genéricas) e está REJECTED como acabamento.
+- **Contexto no jogo:** a UI fica sobre a cena 3D da torre (ver AST-CA-001). Ela tem três blocos:
+  1. **Odômetro** (canto superior esquerdo): contador grande de Tiques em roletes de latão numerados, abaixo dele a produção por segundo, a Luz Estelar e dois pequenos mostradores circulares: *Amplitude* (ponteiro sobre arco com zona verde-escura ideal) e *Reserva de corda* (ponteiro que desce com o peso).
+  2. **A Bancada** (coluna direita, ~22% da largura): lista vertical de compras. Cada item é uma etiqueta de latão gravada presa a uma régua de nogueira, com: ícone gravado da peça (roda, pêndulo, peso de chumbo, rotor de vento, Lua), nome, custo e uma linha pequena de informação. Estados: comprável (latão polido, brilho), caro demais (latão fosco escurecido), em hover (a etiqueta levanta levemente com sombra).
+  3. **Botões de ação** (embaixo): uma manivela/botão "Dar corda" em forma de chave de relógio estilizada, e um botão "Olhar o céu" com ícone de cúpula.
+- **Direção artística:** UI **diegética-física**: latão gravado, nogueira, papel antigo, esmalte. Tipografia serifada clássica (estilo Garamond/Caslon) para títulos, numerais elegantes de relojoaria para números. Ornamentação contida, nada de rococó. Deve parecer parte do mundo, não um app.
+- **Composição:** captura 16:9 de tela inteira do jogo, a cena 3D do mecanismo ao centro (como AST-CA-003 painel 3) e a UI nos cantos, ocupando no máximo 30% da tela.
+- **Paleta:** a mesma de AST-CA-001; textos em creme (#EDE6D6) sobre nogueira escura; acentos em aço azulado (#2B3F6B) para estados especiais.
+- **Restrições:** nada de cards arredondados com blur, pílulas, sombras genéricas de web, ícones flat de app, neon. Texto legível não é obrigatório (o GPT erra letras); o que importa é a forma, o material e a hierarquia.
+- **Formato:** 16:9.
+
+**Prompt:**
+
+```
+Full-screen 16:9 game UI mockup over a 3D scene. Center: a warm-lit brass astronomical clockwork mechanism on a walnut plinth inside a dark stone observatory tower at night, with a pendulum and an enamel clock dial. Top-left: an elegant odometer made of engraved brass number rollers showing a large counter, below it two small round gauges with cream enamel faces and blued steel needles. Right side column (about one fifth of the screen width): a vertical stack of engraved brass name plates mounted on a dark walnut rail, each plate with a small engraved icon (gear wheel, pendulum, lead weight, wind rotor, crescent moon), a title line and a cost line; some plates polished and bright, some dull and darkened, one plate slightly raised with a soft shadow as if hovered. Bottom center: a large button shaped like an ornate clock winding key in brass and walnut. Bottom left: a small brass button with an engraved observatory dome icon. Classic serif typography in cream color, restrained engraving, diegetic physical materials: polished brass, waxed walnut, aged paper, cream enamel, heat-blued steel accents. Premium indie PC game, cohesive with the scene. No rounded web cards, no blur panels, no pill buttons, no flat app icons, no neon, no steampunk pipes. 16:9.
+```

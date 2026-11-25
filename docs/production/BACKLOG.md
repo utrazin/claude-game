@@ -18,6 +18,6 @@ Estados: BACKLOG · BRIEFING · IN PROGRESS · IN REVIEW · CHANGES REQUESTED ·
 | A-005 | Arte 3D | Gerador de rodas Blender v1 | IN REVIEW | spike: geometria boa; material e luz não aprovados (latão acobreado, fundo plástico) |
 | T-001 | Técnico | Protótipo do core loop na Godot | INTEGRATED | v0: proto-v2 |
 | T-002 | Técnico | Economia v0.4 (energia) no jogo + HUD com prévia | INTEGRATED | 18 testes; captura proto-v3-energia |
-| U-001 | UI | Mockup da bancada (GPT Image) | BACKLOG | após GDD revisado |
+| U-001 | UI | Mockup da bancada (GPT Image) AST-UI-001 | BRIEFING | com Enzo |
 | S-001 | Som | Direção sonora e fontes licenciadas | BACKLOG | |
 | X-001 | Ideia | Modo compacto / companheiro de desktop | BACKLOG | R01 aponta tendência forte; avaliar após VS |

@@ -125,11 +125,12 @@ func _process(delta: float) -> void:
 	var k := clampf(mech.bounds().size.x / 4.2, 0.42, 1.0)
 	if dial.visible and absf(dial.scale.x - k) > 0.001 and not _tweening(dial): dial.scale = Vector3.ONE * k
 	if orrery.visible and not _tweening(orrery): orrery.scale = Vector3.ONE * clampf(k * 1.2, 0.6, 1.4)
-	dial.position = mech.position + Vector3(right - 0.1 * k, mech.axle_height + 0.95 * k, 0.35)
+	var a1: Vector3 = mech.arbors[1].position if eco.levels[1] > 0 else mech.arbors[0].position
+	dial.position = mech.position + Vector3(a1.x, mech.axle_height * 2.0 + 0.5 * k, 0.35)
 	var post := dial.get_node("Post") as MeshInstance3D
 	var ph := (dial.position.y - mech.position.y) / k
 	post.scale.y = ph; post.position.y = -ph * 0.5
-	orrery.position = mech.position + Vector3(right * 0.35, mech.axle_height + 0.25, -0.45)
+	orrery.position = mech.position + Vector3(-0.5, mech.axle_height * 1.6, -1.0)
 	# the centre wheel turns once per "hour": minute hand follows arbor 1, hour hand 1/12
 	if mech.spins.size() > 1 and eco.levels[1] > 0:
 		var a := -mech.spins[1].rotation.z

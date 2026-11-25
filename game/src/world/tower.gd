@@ -28,6 +28,7 @@ func _ready() -> void:
 	mech.setup(eco)
 	cam.snap()
 	comps = Complications.new(); comps.name = "Complications"; add_child(comps); comps.setup(eco, mech)
+	var reg := RegulatorView.new(); reg.name = "Regulator"; add_child(reg); reg.setup(eco, mech)
 	sky_chart = SkyChart.new(); sky_chart.name = "SkyChart"; add_child(sky_chart); sky_chart.setup(eco, Room.WALL_H)
 	get_viewport().physics_object_picking = true
 	_build_crank()
