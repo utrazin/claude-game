@@ -1,0 +1,14 @@
+# Registro de decisões
+
+Decisões aqui não mudam sem uma nova entrada que explique o motivo.
+
+| # | Data | Decisão | Motivo | Evidência |
+|---|---|---|---|---|
+| D01 | 2026-11-25 | Engine Godot 4.7.2 stable, renderer Forward+ | versão estável mais recente disponível; Forward+ dá SSAO, SSR, sombras e materiais PBR que o latão precisa | `godot --version`; teste Forward+ via lavapipe |
+| D02 | 2026-11-25 | Conceito: ASTRARIUM (relógio astronômico) | maior nota na exploração C01; nicho aberto segundo R01 (nenhum idle 3D com ambiente premium como mostrador; idles de engrenagem são 2D e temáticos apenas) | `docs/concept/C01`, `docs/research/R01` |
+| D03 | 2026-11-25 | Arte 3D principal via Blender (bpy 5.3) procedural, não via NoctForge3D | NoctForge3D gera BBModel (cubos estilo Blockbench), incompatível com a restrição de não ser low poly; bpy permite booleanas exatas, bevel, weighted normals e GLB | spike `docs/devlog/2026-11-25_spike-engrenagem-v1.png` |
+| D04 | 2026-11-25 | NoctForge 2D e asset-kit ficam para ícones, texturas procedurais e assets de UI | ambos passam nos testes e são bons em 2D/Canvas | logs de teste da sessão 1 |
+| D05 | 2026-11-25 | Relação de cada estágio é limitada (máx. 120 dentes) | versões ilimitadas explodiram no simulador; o limite também é físico e visível | GDD §8 |
+| D06 | 2026-11-25 | Estrelas dão bônus aditivo, constelação multiplica | estrelas multiplicativas criaram loop de realimentação | GDD §8 |
+| D07 | 2026-11-25 | UI em inglês como base com tradução PT-BR via `tr()` desde o início | público Steam global; o diretor de produto fala português | — |
+| D08 | 2026-11-25 | Sem estética steampunk vitoriana | evitar clichê; referência é horologia astronômica histórica | V01 |
