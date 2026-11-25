@@ -47,3 +47,21 @@ GFX_MEDIUM,Graphics: Medium,Gráficos: Médio
 GFX_HIGH,Graphics: High,Gráficos: Alto
 SKY_HINT,Click the pulsing star to light it with Starlight,Clique na estrela que pulsa para acendê-la com Luz Estelar
 NEEDS_WEIGHT,needs a heavier weight,precisa de um peso mais forte
+TAGLINE,A clockwork that winds the night sky,Um relógio que dá corda no céu noturno
+MENU_CONTINUE,Continue,Continuar
+MENU_START,Begin,Começar
+MENU_NEW,New Game,Novo jogo
+MENU_OPTIONS,Options,Opções
+MENU_QUIT,Quit,Sair
+CONFIRM_NEW,"This dismantles the clock and erases your progress. The sky goes dark again.","Isso desmonta o relógio e apaga seu progresso. O céu volta a escurecer."
+CONFIRM_YES,Dismantle and start over,Desmontar e recomeçar
+BACK,Back,Voltar
+VOL_MASTER,Master volume,Volume geral
+VOL_SFX,Mechanism,Mecanismo
+VOL_MUSIC,Music,Música
+VOL_AMBIENCE,Ambience,Ambiente
+OPT_GRAPHICS,Graphics,Gráficos
+OPT_LANGUAGE,Language,Idioma
+OPT_FPS,Show FPS,Mostrar FPS
+OFF,Off,Desligado
+ON,On,Ligado

@@ -11,6 +11,8 @@ const NAMES := ["GFX_LOW", "GFX_MEDIUM", "GFX_HIGH"]
 
 var quality: int = Quality.HIGH
 var show_fps := false
+var volumes := {"Master": 0.9, "SFX": 0.8, "Music": 0.6, "Ambience": 0.7}   ## linear 0..1
+var locale := ""
 
 
 func _ready() -> void:
@@ -20,7 +22,43 @@ func _ready() -> void:
 		quality = clampi(int(cfg.get_value("graphics", "quality")), 0, 2)
 	else:
 		quality = default_quality()
+	for b in volumes:
+		volumes[b] = clampf(float(cfg.get_value("audio", b, volumes[b])), 0.0, 1.0)
+	show_fps = bool(cfg.get_value("graphics", "show_fps", false))
+	locale = str(cfg.get_value("general", "locale", ""))
+	if locale == "":
+		locale = "pt_BR" if OS.get_locale_language() == "pt" else "en"
+	TranslationServer.set_locale(locale)
 	apply_viewport()
+	apply_audio.call_deferred()
+
+
+func save() -> void:
+	var cfg := ConfigFile.new(); cfg.load(PATH)
+	cfg.set_value("graphics", "quality", quality); cfg.set_value("graphics", "show_fps", show_fps)
+	for b in volumes: cfg.set_value("audio", b, volumes[b])
+	cfg.set_value("general", "locale", locale)
+	cfg.save(PATH)
+
+
+func apply_audio() -> void:
+	for b in volumes:
+		var i := AudioServer.get_bus_index(b)
+		if i >= 0:
+			AudioServer.set_bus_volume_db(i, linear_to_db(maxf(volumes[b], 0.0001)))
+			AudioServer.set_bus_mute(i, volumes[b] <= 0.001)
+
+
+func set_volume(bus: String, v: float) -> void:
+	volumes[bus] = clampf(v, 0.0, 1.0); apply_audio(); save()
+
+
+func set_locale(l: String) -> void:
+	locale = l; TranslationServer.set_locale(l); save(); changed.emit()
+
+
+func set_show_fps(on: bool) -> void:
+	show_fps = on; save(); changed.emit()
 
 
 func default_quality() -> int:
@@ -32,8 +70,7 @@ func default_quality() -> int:
 
 func set_quality(q: int) -> void:
 	quality = clampi(q, 0, 2)
-	var cfg := ConfigFile.new(); cfg.load(PATH)
-	cfg.set_value("graphics", "quality", quality); cfg.save(PATH)
+	save()
 	apply_viewport()
 	changed.emit()
 
@@ -92,6 +129,6 @@ func _unhandled_key_input(event: InputEvent) -> void:
 	var k := event as InputEventKey
 	if k == null or not k.pressed or k.echo: return
 	if k.keycode == KEY_F3:
-		show_fps = not show_fps; changed.emit()
+		set_show_fps(not show_fps)
 	elif k.keycode == KEY_F10:
 		set_quality((quality + 1) % 3)

@@ -24,7 +24,7 @@ Fase 3 — Prototyping. Protótipo v4 jogável: economia v0.4 (energia: peso, co
 - Nenhum técnico. Performance real só pode ser medida na máquina do Enzo (container renderiza por software).
 
 ## Próximas ações
-1. UI v1 feita (proto-v7: `src/ui/hud.gd`, `gauge.gd`, texturas de `tools/ui/gen_ui.py`, fonte EB Garamond OFL). Falta: menu principal, opções, tutorial curto.
+1. UI v1 feita (proto-v7: `src/ui/hud.gd`, `gauge.gd`, texturas de `tools/ui/gen_ui.py`, fonte EB Garamond OFL). proto-v8: tela de título, opções (volumes, gráficos, idioma, FPS), Esc reabre o menu. Falta: tutorial curto.
 2. Rotor de vento na cúpula; peso e corrente reais; manivela visível; textura de pedra em blocos.
 3. Constelação com magnitude e vizinhança (F4) e Polar aberta pelo mostrador (F2).
 4. Simulador v2 com planejador e Grande Ano; Lua em ≤15 min.

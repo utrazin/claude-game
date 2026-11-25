@@ -59,6 +59,21 @@ func save_game() -> bool:
 	return true
 
 
+## Fresh start: wipes the run and the save (the menu asks for confirmation first).
+func new_game() -> void:
+	eco.from_dict({})
+	eco.purchased.emit("load", "")
+	eco.changed.emit()
+	var dir := DirAccess.open("user://")
+	for f in [SAVE_PATH.get_file(), SAVE_PATH.get_file() + ".bak"]:
+		if dir.file_exists(f): dir.remove(f)
+	save_game()
+
+
+func has_progress() -> bool:
+	return eco.total_ticks > 0.0
+
+
 func load_game() -> bool:
 	for path in [SAVE_PATH, SAVE_PATH + ".bak"]:
 		if not FileAccess.file_exists(path):

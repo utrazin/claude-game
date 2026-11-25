@@ -39,6 +39,12 @@ func _ready() -> void:
 	hud.wind_hold.connect(func(h): _holding = h)
 	hud.look_up.connect(_on_look_up)
 	cam.sky_focus = sky_chart.centre()
+	var menu := preload("res://src/ui/menu.gd").new(); menu.name = "Menu"; add_child(menu)
+	hud.visible = false
+	menu.closed.connect(func(): hud.visible = true)
+	menu.visibility_changed.connect(func(): hud.visible = not menu.visible)
+	if OS.get_cmdline_user_args().size() > 0 and not ("--menu" in OS.get_cmdline_user_args() or "--menu-options" in OS.get_cmdline_user_args()):
+		menu.close()     # debug captures/autoplay go straight to the game
 	cam.sky_shot.connect(_on_sky_shot)
 
 
