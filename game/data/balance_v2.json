@@ -1,0 +1,416 @@
+{
+  "_doc": "Economia v0.4 (modelo D10: regulador + trem + energia do peso). Lido pelo jogo e por tools/sim/economy_v2.py.",
+  "regulator": {
+    "f0": 0.5,
+    "growth": 1.22,
+    "cost0": 12,
+    "cost_growth": 1.55,
+    "_doc": "frequência alvo do regulador (batidas/s)"
+  },
+  "impulse": {
+    "e_per_hz": 1.0,
+    "_doc": "energia (torque) que o regulador exige por batida, cresce com a frequência"
+  },
+  "weight": {
+    "m0": 3.0,
+    "growth": 1.45,
+    "cost0": 10,
+    "cost_growth": 1.5,
+    "_doc": "torque do peso"
+  },
+  "shaft": {
+    "h0": 30.0,
+    "per_level": 30.0,
+    "cost0": 60,
+    "cost_growth": 2.2,
+    "_doc": "altura de queda (reserva de energia)"
+  },
+  "cord_per_beat": 1.0,
+  "pinion_teeth": 12,
+  "base_teeth": 24,
+  "teeth_per_level": 6,
+  "max_level": 17,
+  "stages": [
+    {
+      "id": "great_wheel",
+      "unlock": 0,
+      "cost0": 15,
+      "cost_growth": 1.35
+    },
+    {
+      "id": "center_wheel",
+      "unlock": 120,
+      "cost0": 80,
+      "cost_growth": 1.37
+    },
+    {
+      "id": "third_wheel",
+      "unlock": 2000.0,
+      "cost0": 1200.0,
+      "cost_growth": 1.39
+    },
+    {
+      "id": "fourth_wheel",
+      "unlock": 60000.0,
+      "cost0": 30000.0,
+      "cost_growth": 1.41
+    },
+    {
+      "id": "fifth_wheel",
+      "unlock": 2000000.0,
+      "cost0": 1000000.0,
+      "cost_growth": 1.43
+    }
+  ],
+  "winding": {
+    "per_click": 1.0,
+    "hold_rate": 3.0,
+    "boost_per_click": 1.2,
+    "boost_hold_rate": 3.0,
+    "boost_max": 12.0,
+    "boost_mult": 0.6,
+    "_doc_boost": "remontoir: com o peso no topo, dar corda carrega a mola de força constante: +60% de batidas enquanto durar (segundos, teto 12)"
+  },
+  "rotor": {
+    "w0": 1.0,
+    "growth": 1.3,
+    "unlock": 250,
+    "cost0": 50,
+    "cost_growth": 1.7,
+    "_doc": "rotor de vento na lanterna da cúpula: corda automática (altura/s)"
+  },
+  "yield0": 1.0,
+  "complications": [
+    {
+      "id": "hour_dial",
+      "cost": 60,
+      "yield_mult": 2.0,
+      "load": 0.0
+    },
+    {
+      "id": "moon",
+      "cost": 550,
+      "yield_mult": 1.5,
+      "load": 0.5,
+      "starlight": 0.05,
+      "level_cost0": 700,
+      "level_growth": 1.7,
+      "level_yield": 0.25
+    },
+    {
+      "id": "mercury",
+      "cost": 60000.0,
+      "yield_mult": 1.5,
+      "load": 1.5,
+      "starlight": 0.15,
+      "level_cost0": 50000.0,
+      "level_growth": 1.8,
+      "level_yield": 0.25
+    }
+  ],
+  "stars": {
+    "cost0": 40,
+    "growth": 2.6,
+    "yield_add": 0.35,
+    "constellation_size": 7,
+    "constellation_mult": 2.0,
+    "_doc": "custo base cresce com o total de estrelas acesas no céu inteiro (persistente)"
+  },
+  "starlight_exp": 0.5,
+  "ratio_yield_exp": 0.25,
+  "_doc_ratio_yield": "D15: cada relação extra divide o tempo mais fino: rendimento por batida × (R/R0)^0.5. Roda que deixaria a amplitude < 100% fica travada (peso fraco).",
+  "sky": {
+    "_doc": "D16 (F4/F5): constelações com magnitude e vizinhança; o céu persiste entre Grandes Anos. mag 1 = brilhante (cara, rende mais), 3 = fraca.",
+    "mag": {
+      "1": {
+        "cost": 2.2,
+        "yield": 0.6
+      },
+      "2": {
+        "cost": 1.0,
+        "yield": 0.35
+      },
+      "3": {
+        "cost": 0.5,
+        "yield": 0.15
+      }
+    },
+    "constellations": [
+      {
+        "id": "clavis",
+        "gate": "moon",
+        "bonus": {
+          "type": "yield_mult",
+          "value": 2.0
+        },
+        "stars": [
+          [
+            -20,
+            58,
+            2
+          ],
+          [
+            -8,
+            63,
+            1
+          ],
+          [
+            6,
+            61,
+            2
+          ],
+          [
+            14,
+            54,
+            3
+          ],
+          [
+            -2,
+            70,
+            3
+          ],
+          [
+            -14,
+            74,
+            2
+          ],
+          [
+            20,
+            67,
+            1
+          ]
+        ],
+        "edges": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            2,
+            6
+          ]
+        ]
+      },
+      {
+        "id": "rota",
+        "gate": "mercury",
+        "bonus": {
+          "type": "wheel_cost",
+          "value": 0.5
+        },
+        "stars": [
+          [
+            95,
+            52,
+            1
+          ],
+          [
+            108,
+            58,
+            2
+          ],
+          [
+            120,
+            52,
+            2
+          ],
+          [
+            114,
+            44,
+            3
+          ],
+          [
+            100,
+            42,
+            3
+          ],
+          [
+            107,
+            50,
+            1
+          ]
+        ],
+        "edges": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            0,
+            5
+          ],
+          [
+            2,
+            5
+          ]
+        ]
+      },
+      {
+        "id": "ventus",
+        "gate": "great_year",
+        "bonus": {
+          "type": "wind_mult",
+          "value": 3.0
+        },
+        "stars": [
+          [
+            -100,
+            48,
+            2
+          ],
+          [
+            -112,
+            55,
+            1
+          ],
+          [
+            -124,
+            50,
+            3
+          ],
+          [
+            -118,
+            62,
+            2
+          ],
+          [
+            -106,
+            64,
+            3
+          ]
+        ],
+        "edges": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ]
+        ]
+      },
+      {
+        "id": "horologium",
+        "gate": "ventus_complete",
+        "bonus": {
+          "type": "yield_mult",
+          "value": 3.0
+        },
+        "stars": [
+          [
+            180,
+            60,
+            1
+          ],
+          [
+            168,
+            66,
+            2
+          ],
+          [
+            192,
+            66,
+            2
+          ],
+          [
+            180,
+            74,
+            1
+          ],
+          [
+            160,
+            56,
+            3
+          ],
+          [
+            200,
+            56,
+            3
+          ],
+          [
+            180,
+            50,
+            2
+          ]
+        ],
+        "edges": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            0,
+            6
+          ]
+        ]
+      }
+    ],
+    "_doc_finale": "Relógio Completo: as 4 constelações acesas. Tela de fim; o jogo continua (Grandes Anos seguem)."
+  },
+  "great_year": {
+    "_doc": "pronto com Clavis completa e Mercúrio construído; Éons = floor(sqrt(luz estelar total/50)); +10% rendimento por Éon",
+    "aeon_yield": 0.1,
+    "aeon_div": 50
+  }
+}

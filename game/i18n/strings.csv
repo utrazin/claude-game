@@ -1,0 +1,84 @@
+keys,en,pt_BR
+TICKS,Ticks,Tiques
+STARLIGHT,Starlight,Luz Estelar
+PER_SEC,/s,/s
+EFFICIENCY,Efficiency,Eficiência
+POWER_LOAD,Power %s · Load %s,Força %s · Carga %s
+WIND,Wind,Dar corda
+WIND_HINT,Wind to raise the weight · when full it charges the remontoir,"Dê corda para subir o peso · com ele cheio, carrega o remontoir"
+OVERWIND,Overwind,Sobrecorda
+BENCH,The Bench,A Bancada
+STAGE_great_wheel,Great Wheel,Roda Grande
+STAGE_center_wheel,Centre Wheel,Roda Central
+STAGE_third_wheel,Third Wheel,Terceira Roda
+STAGE_fourth_wheel,Fourth Wheel,Quarta Roda
+STAGE_escape_wheel,Escape Wheel,Roda de Escape
+COMP_hour_dial,Hour Dial,Mostrador das Horas
+COMP_moon,The Moon,A Lua
+COMP_mercury,Mercury,Mercúrio
+DRIVE,Drive Weight,Peso Motor
+RESERVE,Reserve,Reserva
+STAR,Light a Star,Acender Estrela
+UNLOCK,Mount,Montar
+BUILD,Build,Construir
+TEETH,%d teeth · ratio ×%s,%d dentes · relação ×%s
+MAXED,Finished,Concluída
+LEVEL,Lv %d,Nv %d
+OFFLINE_TITLE,While you were away,Enquanto você esteve fora
+OFFLINE_BODY,"The weight fell for %s. The Astrarium kept ticking.","O peso desceu por %s. O Astrarium continuou tiquetaqueando."
+GREAT_YEAR,Complete the Great Year,Completar o Grande Ano
+LOOK_UP,Look at the sky,Olhar o céu
+LOOK_DOWN,Back to the bench,Voltar à bancada
+REGULATOR,Regulator,Regulador
+SHAFT,Weight Shaft,Poço do Peso
+ROTOR,Wind Rotor,Rotor de Vento
+TORQUE,Torque,Torque
+DEPTH,Depth,Profundidade
+BEATS_PER_SEC,beats/s,batidas/s
+AMPLITUDE,Amplitude,Amplitude
+LIMIT_regulator,limited by the regulator,limitado pelo regulador
+LIMIT_amplitude,weight too light for the train,peso fraco para o trem
+LIMIT_winding,limited by winding,limitado pela corda
+PREVIEW,"After: production %s · amplitude %s","Depois: produção %s · amplitude %s"
+WARN_AMP,the train will drag,o trem vai arrastar
+REMONTOIR,"Remontoir %s (%ss)","Remontoir %s (%ss)"
+GFX_LOW,Graphics: Low,Gráficos: Baixo
+GFX_MEDIUM,Graphics: Medium,Gráficos: Médio
+GFX_HIGH,Graphics: High,Gráficos: Alto
+SKY_HINT,Click the pulsing star to light it with Starlight,Clique na estrela que pulsa para acendê-la com Luz Estelar
+NEEDS_WEIGHT,weight too weak,peso fraco demais
+TAGLINE,A clockwork that winds the night sky,Um relógio que dá corda no céu noturno
+MENU_CONTINUE,Continue,Continuar
+MENU_START,Begin,Começar
+MENU_NEW,New Game,Novo jogo
+MENU_OPTIONS,Options,Opções
+MENU_QUIT,Quit,Sair
+CONFIRM_NEW,"This dismantles the clock and erases your progress. The sky goes dark again.","Isso desmonta o relógio e apaga seu progresso. O céu volta a escurecer."
+CONFIRM_YES,Dismantle and start over,Desmontar e recomeçar
+BACK,Back,Voltar
+VOL_MASTER,Master volume,Volume geral
+VOL_SFX,Mechanism,Mecanismo
+VOL_MUSIC,Music,Música
+VOL_AMBIENCE,Ambience,Ambiente
+OPT_GRAPHICS,Graphics,Gráficos
+OPT_LANGUAGE,Language,Idioma
+OPT_FPS,Show FPS,Mostrar FPS
+OFF,Off,Desligado
+ON,On,Ligado
+COACH_WIND,"The weight is the clock's energy. Wind it: click, or hold to keep winding.","O peso é a energia do relógio. Dê corda: clique, ou segure para continuar."
+COACH_BUY,"Polished plates on the bench are parts you can afford. Fit one to the clock.","Etiquetas polidas na bancada são peças que você pode comprar. Monte uma no relógio."
+COACH_PREVIEW,"Hover a plate to preview the change before buying. The bench never sells a worse clock.","Passe o mouse numa etiqueta para ver a mudança antes de comprar. A bancada nunca vende um relógio pior."
+COACH_REMONTOIR,"The weight is full. Keep winding to charge the remontoir: the clock beats faster for a while.","O peso está cheio. Continue dando corda para carregar o remontoir: o relógio bate mais rápido por um tempo."
+COACH_SKY,"You have Starlight for a star. Look at the sky and click the pulsing one.","Você tem Luz Estelar para uma estrela. Olhe o céu e clique na que pulsa."
+CONST_CLAVIS,The Key,A Chave
+CONST_ROTA,The Wheel,A Roda
+CONST_VENTUS,The Wind,O Vento
+MAG,magnitude %d,magnitude %d
+GREAT_YEAR,The Great Year,O Grande Ano
+GY_INFO,+%d Aeons · the sky stays lit,+%d Éons · o céu continua aceso
+GY_BODY,"The heavens have turned once. Dismantle the machine and build it again, wiser: you gain %d Aeons (+%d%% yield, forever). Every lit star stays in the sky, and a new region of the dome opens.","O céu deu uma volta completa. Desmonte a máquina e construa de novo, mais sábio: você ganha %d Éons (+%d%% de rendimento, para sempre). Toda estrela acesa continua no céu, e uma nova região da cúpula se abre."
+GY_GO,Begin the Great Year,Começar o Grande Ano
+CONST_HOROLOGIUM,The Clock,O Relógio
+FINALE_TITLE,The Astrarium is complete,O Astrarium está completo
+FINALE_BODY,"Every star of the dome is lit, and the clock now keeps the time of the whole sky. It took %d Great Years and %s of patience. The tower will go on ticking: the Great Years continue, and the sky only grows brighter.","Todas as estrelas da cúpula estão acesas, e o relógio agora marca o tempo do céu inteiro. Foram %d Grandes Anos e %s de paciência. A torre continua tiquetaqueando: os Grandes Anos seguem, e o céu só fica mais claro."
+FINALE_OK,Keep watching the sky,Continuar observando o céu
