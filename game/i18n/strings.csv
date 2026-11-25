@@ -5,7 +5,7 @@ PER_SEC,/s,/s
 EFFICIENCY,Efficiency,Eficiência
 POWER_LOAD,Power %s · Load %s,Força %s · Carga %s
 WIND,Wind,Dar corda
-WIND_HINT,Click to wind · hold to overwind,Clique para dar corda · segure para sobrecorda
+WIND_HINT,Click to raise the weight · hold to keep winding,Clique para subir o peso · segure para continuar dando corda
 OVERWIND,Overwind,Sobrecorda
 BENCH,The Bench,A Bancada
 STAGE_great_wheel,Great Wheel,Roda Grande
@@ -17,7 +17,7 @@ COMP_hour_dial,Hour Dial,Mostrador das Horas
 COMP_moon,The Moon,A Lua
 COMP_mercury,Mercury,Mercúrio
 DRIVE,Drive Weight,Peso Motor
-RESERVE,Winding Reserve,Reserva de Corda
+RESERVE,Reserve,Reserva
 STAR,Light a Star,Acender Estrela
 UNLOCK,Mount,Montar
 BUILD,Build,Construir
@@ -29,3 +29,15 @@ OFFLINE_BODY,"The weight fell for %s. The Astrarium kept ticking.","O peso desce
 GREAT_YEAR,Complete the Great Year,Completar o Grande Ano
 LOOK_UP,Look at the sky,Olhar o céu
 LOOK_DOWN,Back to the bench,Voltar à bancada
+REGULATOR,Regulator,Regulador
+SHAFT,Weight Shaft,Poço do Peso
+ROTOR,Wind Rotor,Rotor de Vento
+TORQUE,Torque,Torque
+DEPTH,Depth,Profundidade
+BEATS_PER_SEC,beats/s,batidas/s
+AMPLITUDE,Amplitude,Amplitude
+LIMIT_regulator,limited by the regulator,limitado pelo regulador
+LIMIT_amplitude,weight too light for the train,peso fraco para o trem
+LIMIT_winding,limited by winding,limitado pela corda
+PREVIEW,"After: production %s · amplitude %s","Depois: produção %s · amplitude %s"
+WARN_AMP,the train will drag,o trem vai arrastar

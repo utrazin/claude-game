@@ -16,7 +16,8 @@ Estados: BACKLOG · BRIEFING · IN PROGRESS · IN REVIEW · CHANGES REQUESTED ·
 | A-003 | Arte | Tira de progressão AST-CA-003 | APPROVED | gerou D09 |
 | A-004 | Arte | Art Bible v1 | BACKLOG | após A-001..003 |
 | A-005 | Arte 3D | Gerador de rodas Blender v1 | IN REVIEW | spike: geometria boa; material e luz não aprovados (latão acobreado, fundo plástico) |
-| T-001 | Técnico | Protótipo do core loop na Godot | IN PROGRESS | |
+| T-001 | Técnico | Protótipo do core loop na Godot | INTEGRATED | v0: proto-v2 |
+| T-002 | Técnico | Economia v0.4 (energia) no jogo + HUD com prévia | INTEGRATED | 18 testes; captura proto-v3-energia |
 | U-001 | UI | Mockup da bancada (GPT Image) | BACKLOG | após GDD revisado |
 | S-001 | Som | Direção sonora e fontes licenciadas | BACKLOG | |
 | X-001 | Ideia | Modo compacto / companheiro de desktop | BACKLOG | R01 aponta tendência forte; avaliar após VS |

@@ -31,13 +31,21 @@ func _sync(instant: bool) -> void:
 		_reveal(bodies[id].arm, eco.comps.get(id, 0) > 0, instant)
 
 
+var _tw := {}
+
+
+func _tweening(n: Node3D) -> bool:
+	return _tw.has(n) and (_tw[n] as Tween).is_running()
+
+
 func _reveal(n: Node3D, on: bool, instant: bool) -> void:
 	if on == n.visible:
 		return
 	n.visible = on
 	if on and not instant:
 		n.scale = Vector3.ONE * 0.01
-		create_tween().set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT).tween_property(n, "scale", Vector3.ONE, 1.6)
+		var t := create_tween().set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+		t.tween_property(n, "scale", Vector3.ONE * 0.7, 1.6); _tw[n] = t
 	else:
 		n.scale = Vector3.ONE
 
@@ -114,9 +122,12 @@ func _process(delta: float) -> void:
 		return
 	# place the dial above the right end of the train, the orrery behind the great wheel
 	var right := mech.train_extent()
-	dial.position = mech.position + Vector3(right - 0.1, mech.axle_height + 0.95, 0.35)
+	var k := clampf(mech.bounds().size.x / 4.2, 0.42, 1.0)
+	if dial.visible and absf(dial.scale.x - k) > 0.001 and not _tweening(dial): dial.scale = Vector3.ONE * k
+	if orrery.visible and not _tweening(orrery): orrery.scale = Vector3.ONE * clampf(k * 1.2, 0.6, 1.4)
+	dial.position = mech.position + Vector3(right - 0.1 * k, mech.axle_height + 0.95 * k, 0.35)
 	var post := dial.get_node("Post") as MeshInstance3D
-	var ph := dial.position.y - mech.position.y
+	var ph := (dial.position.y - mech.position.y) / k
 	post.scale.y = ph; post.position.y = -ph * 0.5
 	orrery.position = mech.position + Vector3(right * 0.35, mech.axle_height + 0.25, -0.45)
 	# the centre wheel turns once per "hour": minute hand follows arbor 1, hour hand 1/12

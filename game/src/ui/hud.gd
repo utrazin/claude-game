@@ -11,9 +11,13 @@ var lbl_ticks: Label
 var lbl_rate: Label
 var lbl_star: Label
 var lbl_eff: Label
+var lbl_reserve: Label
+var bar_reserve: ProgressBar
+var lbl_preview: Label
 var shop: VBoxContainer
 var rows := {}          ## key -> {button, name, info}
 var _refresh_t := 0.0
+var _hover := ""
 
 const C_PANEL := Color(0.10, 0.065, 0.045, 0.92)
 const C_BRASS := Color(0.86, 0.68, 0.38)
@@ -32,6 +36,12 @@ func _ready() -> void:
 	lbl_rate = _label("", 20, C_TEXT); tv.add_child(lbl_rate)
 	lbl_star = _label("", 20, Color(0.75, 0.82, 1.0)); tv.add_child(lbl_star)
 	lbl_eff = _label("", 16, C_DIM); tv.add_child(lbl_eff)
+	lbl_reserve = _label("", 16, C_DIM); tv.add_child(lbl_reserve)
+	bar_reserve = ProgressBar.new(); bar_reserve.show_percentage = false; bar_reserve.custom_minimum_size = Vector2(320, 10)
+	var bg := StyleBoxFlat.new(); bg.bg_color = Color(0.05, 0.04, 0.03); bar_reserve.add_theme_stylebox_override("background", bg)
+	var fg := StyleBoxFlat.new(); fg.bg_color = C_BRASS.darkened(0.15); bar_reserve.add_theme_stylebox_override("fill", fg)
+	tv.add_child(bar_reserve)
+	lbl_preview = _label("", 15, Color(0.75, 0.82, 1.0)); tv.add_child(lbl_preview)
 	# ---- right: bench shop
 	var side := _panel(); side.set_anchors_preset(Control.PRESET_RIGHT_WIDE)
 	side.offset_left = -440; side.offset_right = -24; side.offset_top = 24; side.offset_bottom = -24
@@ -96,12 +106,16 @@ func _options() -> Array:
 	var out := []
 	for i in eco.levels.size():
 		var o := eco.stage_option(i)
-		if o.kind == "unlock" and not o.available:
-			continue
-		if o.kind == "unlock" and eco.total_ticks < o.cost * 0.25:
+		if o.kind == "unlock" and (not o.available or eco.total_ticks < o.cost * 0.25):
 			continue
 		out.append(o)
-	out.append(eco.drive_option())
+	out.append(eco.regulator_option())
+	out.append(eco.weight_option())
+	var r := eco.rotor_option()
+	if not r.build or eco.total_ticks >= r.cost * 0.4:
+		out.append(r)
+	if eco.total_ticks > 40:
+		out.append(eco.shaft_option())
 	for c in eco.bal.complications:
 		var o := eco.comp_option(c)
 		if o.kind == "build" and eco.total_ticks < o.cost * 0.25:
@@ -111,8 +125,6 @@ func _options() -> Array:
 	var s := eco.star_option()
 	if s.available:
 		out.append(s)
-	if eco.total_ticks > 200:
-		out.append(eco.reserve_option())
 	return out
 
 
@@ -120,20 +132,36 @@ func _title(o: Dictionary) -> String:
 	match o.kind:
 		"unlock": return tr("UNLOCK") + " · " + tr("STAGE_" + o.id)
 		"level": return tr("STAGE_" + o.id)
-		"drive": return tr("DRIVE") + " · " + tr("LEVEL") % (eco.drive + 1)
+		"regulator": return tr("REGULATOR") + " · " + tr("LEVEL") % (eco.regulator + 1)
+		"weight": return tr("DRIVE") + " · " + tr("LEVEL") % (eco.weight + 1)
+		"shaft": return tr("SHAFT") + " · " + tr("LEVEL") % (eco.shaft + 1)
+		"rotor": return (tr("BUILD") + " · " + tr("ROTOR")) if o.build else tr("ROTOR") + " · " + tr("LEVEL") % (eco.rotor + 2)
 		"build": return tr("BUILD") + " · " + tr("COMP_" + o.id)
 		"comp_level": return tr("COMP_" + o.id) + " · " + tr("LEVEL") % (eco.comps[o.id] + 1)
 		"star": return tr("STAR")
-		"reserve": return tr("RESERVE") + " · %dh" % int(eco.reserve_hours() + 1)
 	return o.id
 
 
 func _info(o: Dictionary) -> String:
-	if o.kind == "level":
-		return tr("TEETH") % [eco.teeth(o.index), "%.1f" % eco.ratio(o.index)]
-	if o.kind == "drive":
-		return tr("POWER_LOAD") % [Num.fmt(eco.power()), Num.fmt(eco.load_total())]
+	match o.kind:
+		"level": return tr("TEETH") % [eco.teeth(o.index), "%.1f" % eco.ratio(o.index)]
+		"regulator": return "%.2f " % eco.f_reg() + tr("BEATS_PER_SEC")
+		"weight": return tr("TORQUE") + " " + Num.fmt(eco.torque())
+		"shaft": return tr("DEPTH") + " " + Num.fmt(eco.shaft_height())
+		"rotor": return Num.fmt(eco.rotor_rate()) + tr("PER_SEC")
 	return ""
+
+
+func _preview_text(o: Dictionary) -> String:
+	if not o.available or is_inf(o.cost):
+		return ""
+	var p := eco.preview(o)
+	var now := eco.production()
+	var d: float = p.production / maxf(now, 1e-9) - 1.0
+	var t := tr("PREVIEW") % ["%+.0f%%" % (d * 100.0), "%d%%" % int(minf(p.amplitude, 9.99) * 100.0)]
+	if p.amplitude < 1.0 and eco.amplitude() >= 1.0:
+		t += "  ·  " + tr("WARN_AMP")
+	return t
 
 
 func _refresh_shop() -> void:
@@ -153,6 +181,8 @@ func _refresh_shop() -> void:
 			shop.add_child(b)
 			rows[key] = {"button": b}
 			b.pressed.connect(func(): _buy(key))
+			b.mouse_entered.connect(func(): _hover = key)
+			b.mouse_exited.connect(func(): if _hover == key: _hover = "")
 		rows[key].option = o
 		var b: Button = rows[key].button
 		var cost_txt := tr("MAXED") if is_inf(o.cost) else Num.fmt(o.cost) + " " + (tr("TICKS") if o.currency == "ticks" else tr("STARLIGHT"))
@@ -171,10 +201,14 @@ func _buy(key: String) -> void:
 
 func _process(delta: float) -> void:
 	lbl_ticks.text = Num.fmt(eco.ticks) + "  " + tr("TICKS")
-	lbl_rate.text = Num.fmt(eco.beat_rate()) + " " + tr("TICKS") + tr("PER_SEC") + ("   " + tr("OVERWIND") if eco.overwind_left > 0 else "")
+	lbl_rate.text = Num.fmt(eco.production()) + " " + tr("TICKS") + tr("PER_SEC") + "   ·   %.2f " % eco.beat_freq() + tr("BEATS_PER_SEC")
 	lbl_star.visible = eco.starlight_rate() > 0 or eco.starlight > 0
 	lbl_star.text = Num.fmt(eco.starlight) + " " + tr("STARLIGHT") + "  (+" + Num.fmt(eco.starlight_rate()) + tr("PER_SEC") + ")"
-	lbl_eff.text = tr("EFFICIENCY") + " %d%%   ·   " % int(eco.efficiency() * 100) + tr("POWER_LOAD") % [Num.fmt(eco.power()), Num.fmt(eco.load_total())]
+	lbl_eff.text = tr("AMPLITUDE") + " %d%%   ·   " % int(minf(eco.amplitude(), 9.99) * 100) + tr("LIMIT_" + eco.bottleneck())
+	var au := eco.autonomy()
+	lbl_reserve.text = tr("RESERVE") + "  " + ("∞" if is_inf(au) else Num.duration(au))
+	bar_reserve.max_value = eco.shaft_height(); bar_reserve.value = eco.height
+	lbl_preview.text = _preview_text(rows[_hover].option) if rows.has(_hover) else ""
 	_refresh_t += delta
 	if _refresh_t > 0.25:
 		_refresh_t = 0.0

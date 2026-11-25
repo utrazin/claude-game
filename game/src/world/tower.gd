@@ -101,12 +101,12 @@ func _build_crank() -> void:
 func _build_weight() -> void:
 	weight = Node3D.new(); weight.name = "Weight"; add_child(weight)
 	_refresh_weight()
-	eco.purchased.connect(func(k, _i): if k == "drive": _refresh_weight())
+	eco.purchased.connect(func(k, _i): if k == "weight" or k == "load": _refresh_weight())
 
 
 func _refresh_weight() -> void:
 	for c in weight.get_children(): c.queue_free()
-	var discs := 1 + eco.drive
+	var discs := 1 + eco.weight
 	for d in discs:
 		var m := MeshInstance3D.new(); var cy := CylinderMesh.new()
 		cy.top_radius = 0.11; cy.bottom_radius = 0.11; cy.height = 0.07; cy.radial_segments = 48
@@ -119,18 +119,16 @@ func _refresh_weight() -> void:
 
 
 func _on_wind() -> void:
-	eco.wind()
-	_crank_spin += TAU * 0.25
+	if eco.wind() > 0.0:
+		_crank_spin += TAU * 0.25
 
 
 func _process(delta: float) -> void:
-	if _holding:
-		_hold += delta
-		_crank_spin += delta * TAU * 1.5
-		if _hold > 1.5 and eco.overwind_left <= 0.0:
-			eco.start_overwind()
+	if _holding and not eco.is_fully_wound():
+		eco.hand_rate = eco.bal.winding.hold_rate
+		_crank_spin += delta * TAU * 1.2
 	else:
-		_hold = 0.0
+		eco.hand_rate = 0.0
 	var spin := minf(_crank_spin, delta * TAU * 3.0)
 	_crank_spin -= spin
 	if crank:
@@ -141,4 +139,6 @@ func _process(delta: float) -> void:
 		sky_mat.set_shader_parameter("awake", _awake)
 	if weight:
 		var r0 := eco.teeth(0) * Mechanism.MODULE * 0.5
-		weight.position = mech.position + Vector3(-r0 - 0.95, mech.arbors[0].position.y * 0.55, 0.05)
+		# the weight hangs from the great wheel barrel and falls as energy is spent
+		var frac := eco.height / eco.shaft_height()
+		weight.position = mech.position + Vector3(-r0 - 0.95, lerpf(-0.2, mech.arbors[0].position.y - 0.2, frac), 0.05)
