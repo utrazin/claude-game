@@ -7,8 +7,8 @@ static var _cache := {}
 static func brass() -> StandardMaterial3D:
 	return _mat("brass", func():
 		var m := StandardMaterial3D.new()
-		m.albedo_color = Color(0.80, 0.60, 0.33)
-		m.metallic = 1.0; m.roughness = 0.28
+		m.albedo_color = Color(0.86, 0.70, 0.40)
+		m.metallic = 1.0; m.roughness = 0.24
 		m.anisotropy_enabled = true; m.anisotropy = 0.35
 		return m)
 
@@ -16,7 +16,7 @@ static func brass() -> StandardMaterial3D:
 static func brass_aged() -> StandardMaterial3D:
 	return _mat("brass_aged", func():
 		var m := StandardMaterial3D.new()
-		m.albedo_color = Color(0.55, 0.42, 0.24)
+		m.albedo_color = Color(0.58, 0.47, 0.28)
 		m.metallic = 1.0; m.roughness = 0.45
 		return m)
 

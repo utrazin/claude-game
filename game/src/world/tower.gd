@@ -7,6 +7,8 @@ var mech: Mechanism
 var cam: OrbitCamera
 var crank: Node3D
 var weight: Node3D
+var room: Room
+var sky_mat: ShaderMaterial
 var _crank_spin := 0.0
 var _hold := 0.0
 var _holding := false
@@ -17,9 +19,9 @@ func _ready() -> void:
 	_build_environment()
 	_build_room()
 	mech = Mechanism.new(); mech.name = "Mechanism"; add_child(mech)
-	mech.position = Vector3(-0.2, 0.9, 0.0)
+	mech.position = Vector3(-1.2, 0.42, 0.0)
 	cam = OrbitCamera.new(); cam.fov = 38.0; add_child(cam); cam.current = true
-	mech.layout_changed.connect(func(b: AABB): cam.frame(AABB(b.position + mech.position, b.size).merge(AABB(Vector3(-1.4, 0.0, 0.0), Vector3(3.2, 2.6, 0.5)))))
+	mech.layout_changed.connect(_fit_room)
 	mech.setup(eco)
 	cam.snap()
 	_build_crank()
@@ -32,13 +34,11 @@ func _ready() -> void:
 func _build_environment() -> void:
 	var env := Environment.new()
 	env.background_mode = Environment.BG_SKY
-	var sky := Sky.new(); var ps := ProceduralSkyMaterial.new()
-	ps.sky_top_color = Color(0.015, 0.025, 0.06); ps.sky_horizon_color = Color(0.06, 0.07, 0.12)
-	ps.ground_bottom_color = Color(0.03, 0.02, 0.015); ps.ground_horizon_color = Color(0.18, 0.11, 0.06)
-	ps.sun_angle_max = 0.0
+	var sky := Sky.new(); var ps := ShaderMaterial.new(); ps.shader = preload("res://shaders/night_sky.gdshader")
+	sky_mat = ps
 	sky.sky_material = ps; env.sky = sky
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
-	env.ambient_light_energy = 0.35
+	env.ambient_light_energy = 0.5
 	env.reflected_light_source = Environment.REFLECTION_SOURCE_SKY
 	env.tonemap_mode = Environment.TONE_MAPPER_AGX
 	env.tonemap_exposure = 1.1
@@ -54,34 +54,25 @@ func _build_environment() -> void:
 	# warm lamp light at bench height (key)
 	var key := SpotLight3D.new(); key.name = "LampKey"; add_child(key)
 	key.position = Vector3(-2.4, 2.6, 2.4); key.look_at_from_position(key.position, Vector3(0.6, 1.6, 0.0))
-	key.light_color = Color(1.0, 0.72, 0.42); key.light_energy = 7.0; key.spot_range = 9.0
+	key.light_color = Color(1.0, 0.80, 0.58); key.light_energy = 9.0; key.spot_range = 9.0
 	key.spot_angle = 38.0; key.spot_attenuation = 0.8; key.shadow_enabled = true; key.light_size = 0.15
 	# cool moonlight from the dome (rim)
 	var moon := DirectionalLight3D.new(); moon.name = "Moonlight"; add_child(moon)
-	moon.rotation_degrees = Vector3(-58, 150, 0); moon.light_color = Color(0.55, 0.68, 1.0)
-	moon.light_energy = 0.35; moon.shadow_enabled = true
+	moon.rotation_degrees = Vector3(-62, 160, 0); moon.light_color = Color(0.55, 0.68, 1.0)
+	moon.light_energy = 0.55; moon.shadow_enabled = true
 	# candle fill near the bench
 	var fill := OmniLight3D.new(); fill.name = "Candle"; add_child(fill)
 	fill.position = Vector3(1.6, 1.2, 1.4); fill.light_color = Color(1.0, 0.6, 0.3); fill.light_energy = 0.6; fill.omni_range = 4.0
 
 
 func _build_room() -> void:
-	# [PH] floor: walnut boards placeholder
-	var floor_mi := MeshInstance3D.new(); var pm := PlaneMesh.new(); pm.size = Vector2(16, 16)
-	floor_mi.mesh = pm; var fm := Mats.walnut().duplicate() as StandardMaterial3D
-	fm.albedo_color = Color(0.16, 0.1, 0.07); floor_mi.material_override = fm; add_child(floor_mi)
-	# [PH] tower wall: inverted cylinder, warm limestone
-	var wall := MeshInstance3D.new(); var cm := CylinderMesh.new()
-	cm.top_radius = 6.5; cm.bottom_radius = 6.5; cm.height = 9.0; cm.radial_segments = 96
-	cm.cap_top = false; cm.cap_bottom = false; wall.mesh = cm; wall.position.y = 4.5
-	var wm := StandardMaterial3D.new(); wm.albedo_color = Color(0.42, 0.38, 0.33); wm.roughness = 0.9
-	wm.cull_mode = BaseMaterial3D.CULL_FRONT; wall.material_override = wm; add_child(wall)
-	# back plate of the movement (walnut board on which arbors are mounted)
-	var plate := MeshInstance3D.new(); var bm := BoxMesh.new(); bm.size = Vector3(3.6, 4.2, 0.08)
-	plate.mesh = bm; plate.position = Vector3(0.4, 2.5, -0.22); plate.material_override = Mats.walnut(); add_child(plate)
-	# [PH] base plinth
-	var base := MeshInstance3D.new(); var bb := BoxMesh.new(); bb.size = Vector3(4.0, 0.5, 1.4)
-	base.mesh = bb; base.position = Vector3(0.4, 0.25, 0.3); base.material_override = Mats.walnut(); add_child(base)
+	room = Room.new(); room.name = "Room"; add_child(room)
+
+
+func _fit_room(b: AABB) -> void:
+	var wb := AABB(b.position + mech.position, b.size)
+	room.fit_plinth(wb.position.x - 0.45, wb.end.x + 0.45, mech.position.z + 0.05, mech.position.y)
+	cam.frame(wb.merge(AABB(Vector3(wb.position.x - 0.6, 0.0, 0.0), Vector3(0.1, 0.1, 0.1))))
 
 
 func _build_crank() -> void:
@@ -133,3 +124,7 @@ func _process(delta: float) -> void:
 	_crank_spin -= spin
 	if crank:
 		crank.rotation.z -= spin
+		crank.position = mech.position + mech.arbors[0].position + Vector3(0, 0, 0.42)
+	if weight:
+		var r0 := eco.teeth(0) * Mechanism.MODULE * 0.5
+		weight.position = mech.position + Vector3(-r0 - 0.95, mech.arbors[0].position.y * 0.55, 0.05)

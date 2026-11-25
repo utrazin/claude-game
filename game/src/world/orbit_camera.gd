@@ -4,7 +4,7 @@ extends Camera3D
 
 var target := Vector3.ZERO
 var yaw := deg_to_rad(-18.0)
-var pitch := deg_to_rad(8.0)
+var pitch := deg_to_rad(4.0)
 var distance := 3.0
 var _t_target := Vector3.ZERO
 var _t_distance := 3.0
@@ -17,7 +17,7 @@ var auto_frame := true
 func frame(box: AABB) -> void:
 	if not auto_frame:
 		return
-	_t_target = box.get_center() + Vector3(0, 0.0, 0)
+	_t_target = box.get_center() + Vector3(0, box.size.y * 0.22, 0)
 	var radius := maxf(box.size.length() * 0.5, 0.6)
 	_t_distance = clampf(radius / tan(deg_to_rad(fov * 0.5)) * 1.15, min_distance, max_distance)
 
