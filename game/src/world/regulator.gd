@@ -38,7 +38,7 @@ func _process(delta: float) -> void:
 		return
 	var f := eco.beat_freq()
 	# visual length: physical length for half-period = 1/f, clamped to a readable range
-	var target_len := clampf(9.81 / (PI * PI * maxf(f, 0.05) * maxf(f, 0.05)), 0.35, 1.5)
+	var target_len := clampf(9.81 / (PI * PI * maxf(f, 0.05) * maxf(f, 0.05)), 0.35, 0.9)   # early portal must not dominate the bench
 	_len = lerpf(_len, target_len, 1.0 - exp(-2.0 * delta))
 	var swing_target := 0.0 if f <= 0.0 else deg_to_rad(clampf(eco.amplitude() * 7.0, 2.5, 14.0))
 	_swing = lerpf(_swing, swing_target, 1.0 - exp(-1.5 * delta))

@@ -6,6 +6,7 @@ var eco: Economy
 var mech: Mechanism
 var cam: OrbitCamera
 var crank: Node3D
+var props: Props
 var weight: Node3D
 var room: Room
 var comps: Complications
@@ -32,8 +33,9 @@ func _ready() -> void:
 	var reg := RegulatorView.new(); reg.name = "Regulator"; add_child(reg); reg.setup(eco, mech)
 	sky_chart = SkyChart.new(); sky_chart.name = "SkyChart"; add_child(sky_chart); sky_chart.setup(eco, Room.WALL_H)
 	get_viewport().physics_object_picking = true
-	_build_crank()
-	_build_weight()
+	props = Props.new(); props.name = "Props"; add_child(props); props.setup(eco, mech)
+	crank = props.crank; weight = props.weight
+	_fit_room(mech.bounds())
 	var hud := preload("res://src/ui/hud.gd").new(); hud.name = "HUD"; add_child(hud)
 	hud.wind_pressed.connect(_on_wind)
 	hud.wind_hold.connect(func(h): _holding = h)
@@ -97,43 +99,12 @@ func _build_room() -> void:
 func _fit_room(b: AABB) -> void:
 	var wb := AABB(b.position + mech.position, b.size)
 	room.fit_plinth(wb.position.x - 0.45, wb.end.x + 0.45, mech.position.z + 0.05, mech.position.y)
+	if props: props.layout_frame(wb.position.x - 0.45 - 1.0, wb.end.x + 0.45, mech.position.z)
 	var key := get_node("LampKey") as SpotLight3D
 	var c := wb.get_center()
 	key.position = c + Vector3(-2.6, 2.4, 3.0)
 	key.look_at(c + Vector3(0, 0.2, 0))
 	cam.frame(wb.merge(AABB(Vector3(wb.position.x - 0.6, 0.0, 0.0), Vector3(0.1, 0.1, 0.1))))
-
-
-func _build_crank() -> void:
-	crank = Node3D.new(); crank.name = "Crank"
-	var arm := MeshInstance3D.new(); var b := BoxMesh.new(); b.size = Vector3(0.36, 0.05, 0.03)
-	arm.mesh = b; arm.position.x = 0.15; arm.material_override = Mats.blued_steel(); crank.add_child(arm)
-	var knob := MeshInstance3D.new(); var c := CylinderMesh.new(); c.top_radius = 0.035; c.bottom_radius = 0.04; c.height = 0.16
-	knob.mesh = c; knob.rotation.x = PI / 2; knob.position = Vector3(0.31, 0, 0.09); knob.material_override = Mats.walnut(); crank.add_child(knob)
-	var hub := MeshInstance3D.new(); var h := CylinderMesh.new(); h.top_radius = 0.05; h.bottom_radius = 0.05; h.height = 0.06
-	hub.mesh = h; hub.rotation.x = PI / 2; hub.material_override = Mats.brass(); crank.add_child(hub)
-	crank.position = mech.position + Vector3(0, 0, 0.12)
-	add_child(crank)
-
-
-func _build_weight() -> void:
-	weight = Node3D.new(); weight.name = "Weight"; add_child(weight)
-	_refresh_weight()
-	eco.purchased.connect(func(k, _i): if k == "weight" or k == "load": _refresh_weight())
-
-
-func _refresh_weight() -> void:
-	for c in weight.get_children(): c.queue_free()
-	var discs := 1 + eco.weight
-	for d in discs:
-		var m := MeshInstance3D.new(); var cy := CylinderMesh.new()
-		cy.top_radius = 0.11; cy.bottom_radius = 0.11; cy.height = 0.07; cy.radial_segments = 48
-		m.mesh = cy; m.position.y = -d * 0.075; m.material_override = Mats.lead()
-		weight.add_child(m)
-	var cord := MeshInstance3D.new(); var cc := CylinderMesh.new()
-	cc.top_radius = 0.006; cc.bottom_radius = 0.006; cc.height = 0.5
-	cord.mesh = cc; cord.position.y = 0.28; cord.material_override = Mats.steel(); weight.add_child(cord)
-	weight.position = mech.position + Vector3(-0.55, -0.1, 0.05)
 
 
 func _on_wind() -> void:
@@ -161,11 +132,8 @@ func _process(delta: float) -> void:
 	if comps and sky_mat:
 		_awake = lerpf(_awake, comps.awake(), 1.0 - exp(-0.8 * delta))
 		sky_mat.set_shader_parameter("awake", _awake)
-	if weight:
-		var r0 := eco.teeth(0) * Mechanism.MODULE * 0.5
-		# the weight hangs from the great wheel barrel and falls as energy is spent
-		var frac := eco.height / eco.shaft_height()
-		weight.position = mech.position + Vector3(-r0 - 0.95, lerpf(-0.2, mech.arbors[0].position.y - 0.2, frac), 0.05)
+	if props:
+		props.update_weight(eco.height / eco.shaft_height())
 
 
 ## --- Observatory shot: lamps dim (eyes adjusting to the dark), the sky gains depth,

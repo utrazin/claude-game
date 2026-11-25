@@ -60,15 +60,18 @@ func _wall() -> void:
 	cm.top_radius = RADIUS; cm.bottom_radius = RADIUS; cm.height = WALL_H; cm.radial_segments = 128
 	cm.cap_top = false; cm.cap_bottom = false; mi.mesh = cm; mi.position.y = WALL_H * 0.5
 	var m := StandardMaterial3D.new()
-	m.albedo_color = Color(0.50, 0.48, 0.45); m.albedo_texture = _noise_tex(0.015, 7)
-	m.normal_enabled = true; m.normal_texture = _noise_tex(0.03, 8, true); m.normal_scale = 0.3
-	m.roughness = 0.92; m.uv1_scale = Vector3(6, 2, 1)
+	# limestone ashlar (tools/ui/gen_stone.py): one tile = 2.4 m; circumference ≈ 41 m, height 5.5 m
+	m.albedo_color = Color(0.95, 0.93, 0.90); m.albedo_texture = load("res://assets/textures/limestone_albedo.png")
+	m.normal_enabled = true; m.normal_texture = load("res://assets/textures/limestone_normal.png"); m.normal_scale = 1.0
+	m.roughness_texture = load("res://assets/textures/limestone_rough.png")
+	m.uv1_scale = Vector3(-17, 2.29, 1)
 	m.cull_mode = BaseMaterial3D.CULL_FRONT
 	mi.material_override = m; add_child(mi)
 	# cornice ring where the dome starts
 	var ring := MeshInstance3D.new(); var tm := TorusMesh.new()
 	tm.inner_radius = RADIUS - 0.25; tm.outer_radius = RADIUS + 0.05; tm.rings = 128; tm.ring_segments = 16
-	ring.mesh = tm; ring.position.y = WALL_H; ring.material_override = m; add_child(ring)
+	var cm2 := StandardMaterial3D.new(); cm2.albedo_color = Color(0.46, 0.44, 0.41); cm2.roughness = 0.85
+	ring.mesh = tm; ring.position.y = WALL_H; ring.material_override = cm2; add_child(ring)
 
 
 func _dome() -> void:

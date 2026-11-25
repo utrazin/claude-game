@@ -11,6 +11,15 @@ func _ready() -> void:
 		await _autoplay(int(args.autoplay))
 		if not args.has("shot"):
 			get_tree().quit(); return
+	if args.has("perf"):   # render cost snapshot (draw calls / primitives / objects) at the current quality
+		await get_tree().create_timer(3.0).timeout
+		var rs := RenderingServer
+		print("PERF draw_calls=%d primitives=%d objects=%d vram_MB=%.0f" % [
+			rs.get_rendering_info(rs.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),
+			rs.get_rendering_info(rs.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME),
+			rs.get_rendering_info(rs.RENDERING_INFO_TOTAL_OBJECTS_IN_FRAME),
+			rs.get_rendering_info(rs.RENDERING_INFO_VIDEO_MEM_USED) / 1048576.0])
+		get_tree().quit(); return
 	if not args.has("shot"):
 		queue_free(); return
 	if args.has("state"):

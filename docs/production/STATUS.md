@@ -25,7 +25,7 @@ Fase 3 — Prototyping. Protótipo v4 jogável: economia v0.4 (energia: peso, co
 
 ## Próximas ações
 1. UI v1 feita (proto-v7: `src/ui/hud.gd`, `gauge.gd`, texturas de `tools/ui/gen_ui.py`, fonte EB Garamond OFL). proto-v8: tela de título, opções (volumes, gráficos, idioma, FPS), Esc reabre o menu. proto-v9: tutorial de primeira vez (`src/ui/coach.gd`: corda, compra, prévia, remontoir, céu).
-2. Rotor de vento na cúpula; peso e corrente reais; manivela visível; textura de pedra em blocos.
+2. Feito (proto-v11): calcário em blocos, peso com corrente e poço, manivela, colunas com entablamento, rotor na lanterna. Custo: 158 draw calls / 88k triângulos no Médio (antes 115 / 60k); medir com `--perf`.
 3. Feito: céu v2 e Grande Ano (D16). Pendente: Polar aberta pelo mostrador (F2), conteúdo após o Vento (mais constelações/eras), skin de era por Grande Ano.
 4. Ritmo: `godot --headless --path game -s res://tests/naive_player.gd` (economia real). Lua 14,9 min.
 5. Menu de opções (volume, gráficos, idioma).
