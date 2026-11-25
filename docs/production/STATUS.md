@@ -3,7 +3,7 @@
 **Leia isto primeiro em qualquer nova sessão.** Atualizado: 2026-11-25 (sessão 1, bloco 3).
 
 ## Fase atual
-Fase 3 — Prototyping. Protótipo v4 jogável: economia v0.4 (energia: peso, corda, regulador, rotor), pêndulo visível, céu com constelação Clavis clicável, áudio procedural, testes headless (18/18). Playtest 1 do Enzo respondido em D11–D14 (remontoir, presets gráficos, plano do céu, áudio v2). Build proto-v5 enviada para reteste.
+Fase 3 — Prototyping. Protótipo v4 jogável: economia v0.4 (energia: peso, corda, regulador, rotor), pêndulo visível, céu com constelação Clavis clicável, áudio procedural, testes headless (18/18). Playtest 1 do Enzo respondido em D11–D14 (remontoir, presets gráficos, plano do céu, áudio v2). proto-v5: 61 FPS no Médio no PC do Enzo (D12 validado). proto-v6 com D15 enviada.
 
 ## Aprovado (não mudar sem registro em DECISIONS.md)
 - Conceito e visão: `docs/concept/V01-visao.md` (ASTRARIUM)

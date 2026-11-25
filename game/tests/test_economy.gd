@@ -56,5 +56,14 @@ func _init() -> void:
 	e.stars = 7; e.comps["mercury"] = 1; e.total_starlight = 5000
 	check(e.great_year_ready() and e.do_great_year() == 10 and e.levels[1] == 0, "great year")
 	check(Num.fmt(1234567.0) == "1.23M", "number format")
+	# D15: the bench never sells a worse clock
+	var w := Economy.new(); w.ticks = 1e9
+	var bought := 0
+	for k in 40:
+		var o := w.stage_option(0)
+		if w.can_afford(o): w.buy(o); bought += 1
+	check(w.amplitude() >= 1.0 and bought < 40, "wheel upgrades stop before the weight is overloaded")
+	var p0 := w.potential(); w.buy(w.weight_option())
+	check(w.can_afford(w.stage_option(0)) and w.potential() >= p0, "a heavier weight reopens the wheel")
 	print("FAILS: ", fails)
 	quit(1 if fails else 0)

@@ -46,3 +46,4 @@ GFX_LOW,Graphics: Low,Gráficos: Baixo
 GFX_MEDIUM,Graphics: Medium,Gráficos: Médio
 GFX_HIGH,Graphics: High,Gráficos: Alto
 SKY_HINT,Click the pulsing star to light it with Starlight,Clique na estrela que pulsa para acendê-la com Luz Estelar
+NEEDS_WEIGHT,needs a heavier weight,precisa de um peso mais forte

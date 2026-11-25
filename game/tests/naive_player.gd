@@ -13,15 +13,15 @@ func _init() -> void:
 		if e.total_ticks > 40: out.append(e.shaft_option())
 		return out
 	var n := 0
-	for step in 3000:
+	for step in 12000:
 		var t := step * 0.1
 		e.hand_rate = 3.0 if fmod(t, 20.0) < 10.0 else 0.0
 		e.tick(0.1)
 		for o in hud_order.call():
 			if e.can_afford(o):
 				e.buy(o); n += 1
-				print("t=%.1f buy#%d %s:%s  amp=%.2f prod=%.3f f=%.3f h=%.1f bn=%s" % [t, n, o.kind, o.id, e.amplitude(), e.production(), e.beat_freq(), e.height, e.bottleneck()])
+				if n % 4 == 0: print("t=%.1f buy#%d %s:%s  amp=%.2f prod=%.3f f=%.3f h=%.1f bn=%s" % [t, n, o.kind, o.id, e.amplitude(), e.production(), e.beat_freq(), e.height, e.bottleneck()])
 				break
-		if n >= 12: break
+		if n >= 40: break
 	print("end ticks=", e.ticks, " prod=", e.production())
 	quit()

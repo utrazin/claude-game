@@ -150,6 +150,7 @@ func _title(o: Dictionary) -> String:
 
 
 func _info(o: Dictionary) -> String:
+	if eco.worsens(o): return tr("NEEDS_WEIGHT")
 	match o.kind:
 		"level": return tr("TEETH") % [eco.teeth(o.index), "%.1f" % eco.ratio(o.index)]
 		"regulator": return "%.2f " % eco.f_reg() + tr("BEATS_PER_SEC")

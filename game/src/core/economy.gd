@@ -95,6 +95,9 @@ func boost_factor() -> float:
 
 func yield_per_beat() -> float:
 	var y: float = bal.yield0
+	# finer train = finer division of time: more counted per beat (D15)
+	var r0: float = float(bal.base_teeth) / float(bal.pinion_teeth)
+	y *= pow(train_ratio() / r0, float(bal.get("ratio_yield_exp", 0.0)))
 	for c in bal.complications:
 		var lv: int = comps[c.id]
 		if lv > 0: y *= c.yield_mult * (1.0 + c.get("level_yield", 0.0) * (lv - 1))
@@ -230,8 +233,21 @@ func star_option() -> Dictionary:
 	return {"kind": "star", "id": "star", "currency": "starlight", "available": any,
 		"cost": bal.stars.cost0 * pow(bal.stars.growth, stars)}
 
+## Full-speed output of the clock (ignores the weight's current height and the remontoir).
+func potential() -> float: return f_amp() * yield_per_beat()
+
+## D15: the bench refuses any part that would make the clock worse (the weight could not drive it).
+func worsens(o: Dictionary) -> bool:
+	if o.kind in ["weight", "shaft", "rotor", "star"] or not o.get("available", false) or is_inf(float(o.cost)):
+		return false
+	var e := Economy.new(bal)
+	e.from_dict(to_dict())
+	e._apply(o)
+	return e.potential() < potential() * 0.999
+
 func can_afford(o: Dictionary) -> bool:
 	if not o.available: return false
+	if worsens(o): return false
 	return (ticks if o.currency == "ticks" else starlight) >= o.cost
 
 ## Preview (F7): state after buying, without committing. Returns derived values.

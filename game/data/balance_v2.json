@@ -115,5 +115,7 @@
     "constellation_size": 7,
     "constellation_mult": 2.0
   },
-  "starlight_exp": 0.5
+  "starlight_exp": 0.5,
+  "ratio_yield_exp": 0.5,
+  "_doc_ratio_yield": "D15: cada relação extra divide o tempo mais fino: rendimento por batida × (R/R0)^0.5. Roda que deixaria a amplitude < 100% fica travada (peso fraco)."
 }
