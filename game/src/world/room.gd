@@ -21,7 +21,7 @@ func _sconces() -> void:
 	var glass_m := StandardMaterial3D.new(); glass_m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	glass_m.albedo_color = Color(1.0, 0.85, 0.65, 0.25); glass_m.roughness = 0.05
 	for k in 6:
-		var a := TAU * (k + 0.5) / 6.0 + 0.3
+		var a := TAU * (k + 0.5) / 6.0 + 0.05 * k + 0.85
 		var s := Node3D.new(); s.name = "Sconce%d" % k; add_child(s)
 		s.position = Vector3(cos(a) * (RADIUS - 0.25), 2.3, sin(a) * (RADIUS - 0.25))
 		var flame := MeshInstance3D.new(); var fs := SphereMesh.new(); fs.radius = 0.035; fs.height = 0.11

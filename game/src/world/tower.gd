@@ -8,6 +8,8 @@ var cam: OrbitCamera
 var crank: Node3D
 var weight: Node3D
 var room: Room
+var comps: Complications
+var _awake := 0.0
 var sky_mat: ShaderMaterial
 var _crank_spin := 0.0
 var _hold := 0.0
@@ -24,6 +26,7 @@ func _ready() -> void:
 	mech.layout_changed.connect(_fit_room)
 	mech.setup(eco)
 	cam.snap()
+	comps = Complications.new(); comps.name = "Complications"; add_child(comps); comps.setup(eco, mech)
 	_build_crank()
 	_build_weight()
 	var hud := preload("res://src/ui/hud.gd").new(); hud.name = "HUD"; add_child(hud)
@@ -54,7 +57,7 @@ func _build_environment() -> void:
 	# warm lamp light at bench height (key)
 	var key := SpotLight3D.new(); key.name = "LampKey"; add_child(key)
 	key.position = Vector3(-2.4, 2.6, 2.4); key.look_at_from_position(key.position, Vector3(0.6, 1.6, 0.0))
-	key.light_color = Color(1.0, 0.80, 0.58); key.light_energy = 9.0; key.spot_range = 9.0
+	key.light_color = Color(1.0, 0.80, 0.58); key.light_energy = 12.0; key.spot_range = 9.0
 	key.spot_angle = 38.0; key.spot_attenuation = 0.8; key.shadow_enabled = true; key.light_size = 0.15
 	# cool moonlight from the dome (rim)
 	var moon := DirectionalLight3D.new(); moon.name = "Moonlight"; add_child(moon)
@@ -72,6 +75,10 @@ func _build_room() -> void:
 func _fit_room(b: AABB) -> void:
 	var wb := AABB(b.position + mech.position, b.size)
 	room.fit_plinth(wb.position.x - 0.45, wb.end.x + 0.45, mech.position.z + 0.05, mech.position.y)
+	var key := get_node("LampKey") as SpotLight3D
+	var c := wb.get_center()
+	key.position = c + Vector3(-2.6, 2.4, 3.0)
+	key.look_at(c + Vector3(0, 0.2, 0))
 	cam.frame(wb.merge(AABB(Vector3(wb.position.x - 0.6, 0.0, 0.0), Vector3(0.1, 0.1, 0.1))))
 
 
@@ -125,6 +132,9 @@ func _process(delta: float) -> void:
 	if crank:
 		crank.rotation.z -= spin
 		crank.position = mech.position + mech.arbors[0].position + Vector3(0, 0, 0.42)
+	if comps and sky_mat:
+		_awake = lerpf(_awake, comps.awake(), 1.0 - exp(-0.8 * delta))
+		sky_mat.set_shader_parameter("awake", _awake)
 	if weight:
 		var r0 := eco.teeth(0) * Mechanism.MODULE * 0.5
 		weight.position = mech.position + Vector3(-r0 - 0.95, mech.arbors[0].position.y * 0.55, 0.05)

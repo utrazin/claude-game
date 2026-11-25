@@ -8,7 +8,7 @@ static func brass() -> StandardMaterial3D:
 	return _mat("brass", func():
 		var m := StandardMaterial3D.new()
 		m.albedo_color = Color(0.86, 0.70, 0.40)
-		m.metallic = 1.0; m.roughness = 0.24
+		m.metallic = 0.82; m.roughness = 0.3
 		m.anisotropy_enabled = true; m.anisotropy = 0.35
 		return m)
 
