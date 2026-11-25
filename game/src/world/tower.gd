@@ -178,6 +178,7 @@ func _on_look_up(up: bool) -> void:
 			if not (l is DirectionalLight3D):
 				_lamp_base[l] = (l as Light3D).light_energy
 	Audio.sky_move(up)
+	if up: cam.sky_focus = sky_chart.centre()
 	cam.look_up(up)
 
 

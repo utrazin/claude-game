@@ -23,7 +23,9 @@ var weight := 0
 var shaft := 0
 var rotor := -1                 ## -1 = not built
 var comps := {}
-var stars := 0
+var lit: Array[String] = []     ## lit stars "constellation:index" — the sky persists across Great Years (F5)
+var stars: int:                 ## number of lit stars (read-only view)
+	get: return lit.size()
 var height := 0.0               ## current weight height (energy in the shaft)
 var hand_rate := 0.0            ## winding supplied by the player this frame (height/s)
 var boost := 0.0                ## remontoir charge (s): hand winding past the stopwork speeds the beat
@@ -49,7 +51,7 @@ func reset_run() -> void:
 	levels.clear()
 	for i in bal.stages.size():
 		levels.append(1 if i == 0 else 0)
-	regulator = 0; weight = 0; shaft = 0; rotor = -1; stars = 0
+	regulator = 0; weight = 0; shaft = 0; rotor = -1
 	comps.clear()
 	for c in bal.complications:
 		comps[c.id] = 0
@@ -71,7 +73,7 @@ func f_reg() -> float: return bal.regulator.f0 * pow(bal.regulator.growth, regul
 func torque() -> float: return bal.weight.m0 * pow(bal.weight.growth, weight)
 func shaft_height() -> float: return bal.shaft.h0 + bal.shaft.per_level * shaft
 func rotor_rate() -> float:
-	return 0.0 if rotor < 0 else bal.rotor.w0 * pow(bal.rotor.growth, rotor)
+	return 0.0 if rotor < 0 else bal.rotor.w0 * pow(bal.rotor.growth, rotor) * bonus("wind_mult")
 func winding() -> float: return rotor_rate() + hand_rate
 
 func impulse() -> float:
@@ -101,10 +103,11 @@ func yield_per_beat() -> float:
 	for c in bal.complications:
 		var lv: int = comps[c.id]
 		if lv > 0: y *= c.yield_mult * (1.0 + c.get("level_yield", 0.0) * (lv - 1))
-	var st: Dictionary = bal.stars
-	y *= 1.0 + st.yield_add * stars
-	y *= pow(st.constellation_mult, stars / int(st.constellation_size))
-	y *= 1.0 + 0.1 * aeons
+	var add := 0.0
+	for k in lit: add += float(bal.sky.mag[str(star_mag(k))].yield)
+	y *= 1.0 + add
+	y *= bonus("yield_mult")
+	y *= 1.0 + float(bal.get("great_year", {}).get("aeon_yield", 0.1)) * aeons
 	return y
 
 func production() -> float: return beat_freq() * yield_per_beat()
@@ -194,12 +197,12 @@ func apply_offline(seconds: float) -> Dictionary:
 func stage_option(i: int) -> Dictionary:
 	var st: Dictionary = bal.stages[i]
 	if levels[i] == 0:
-		return {"kind": "unlock", "id": st.id, "index": i, "currency": "ticks", "cost": float(st.unlock),
+		return {"kind": "unlock", "id": st.id, "index": i, "currency": "ticks", "cost": float(st.unlock) * bonus("wheel_cost"),
 			"available": i > 0 and levels[i - 1] > 0}
 	if levels[i] >= max_level():
 		return {"kind": "level", "id": st.id, "index": i, "currency": "ticks", "cost": INF, "available": false, "maxed": true}
 	return {"kind": "level", "id": st.id, "index": i, "currency": "ticks",
-		"cost": st.cost0 * pow(st.cost_growth, levels[i] - 1), "available": true}
+		"cost": st.cost0 * pow(st.cost_growth, levels[i] - 1) * bonus("wheel_cost"), "available": true}
 
 func regulator_option() -> Dictionary:
 	return {"kind": "regulator", "id": "regulator", "currency": "ticks", "available": true,
@@ -226,12 +229,71 @@ func comp_option(c: Dictionary) -> Dictionary:
 			"cost": c.level_cost0 * pow(c.level_growth, lv - 1)}
 	return {"kind": "built", "id": c.id, "currency": "ticks", "cost": INF, "available": false}
 
-func star_option() -> Dictionary:
-	var any := false
+# ------------------------------------------------------------------ sky (D16)
+func constellation(cid: String) -> Dictionary:
+	for c in bal.sky.constellations:
+		if c.id == cid: return c
+	return {}
+
+func star_mag(key: String) -> int:
+	var p := key.split(":")
+	return int(constellation(p[0]).stars[int(p[1])][2])
+
+func gate_open(c: Dictionary) -> bool:
+	match str(c.gate):
+		"moon": return comps.get("moon", 0) > 0
+		"mercury": return comps.get("mercury", 0) > 0
+		"great_year": return great_years > 0
+	return true
+
+func complete(cid: String) -> bool:
+	var c := constellation(cid)
+	for i in c.stars.size():
+		if not ("%s:%d" % [cid, i]) in lit: return false
+	return true
+
+## Product of the bonuses of completed constellations of a given type (1.0 = none).
+func bonus(kind: String) -> float:
+	var m := 1.0
+	for c in bal.sky.constellations:
+		if c.bonus.type == kind and complete(c.id): m *= float(c.bonus.value)
+	return m
+
+## A star can be lit if its region is open and it is the root or touches a lit star (F4).
+func star_reachable(cid: String, i: int) -> bool:
+	var c := constellation(cid)
+	if c.is_empty() or not gate_open(c) or ("%s:%d" % [cid, i]) in lit: return false
+	if i == 0: return true
+	for e in c.edges:
+		if (e[0] == i and ("%s:%d" % [cid, e[1]]) in lit) or (e[1] == i and ("%s:%d" % [cid, e[0]]) in lit):
+			return true
+	return false
+
+func star_cost(cid: String, i: int) -> float:
+	var mag := str(int(constellation(cid).stars[i][2]))
+	return bal.stars.cost0 * pow(bal.stars.growth, lit.size()) * float(bal.sky.mag[mag].cost)
+
+func star_option_at(cid: String, i: int) -> Dictionary:
+	return {"kind": "star", "id": "%s:%d" % [cid, i], "currency": "starlight",
+		"available": star_reachable(cid, i) and _has_starlight_source(), "cost": star_cost(cid, i)}
+
+func _has_starlight_source() -> bool:
 	for c in bal.complications:
-		if comps[c.id] > 0 and c.has("starlight"): any = true
-	return {"kind": "star", "id": "star", "currency": "starlight", "available": any,
-		"cost": bal.stars.cost0 * pow(bal.stars.growth, stars)}
+		if comps[c.id] > 0 and c.has("starlight"): return true
+	return false
+
+## The bench offers the cheapest reachable star (the dome lets the player pick any reachable one).
+func star_option() -> Dictionary:
+	var best := {}
+	for c in bal.sky.constellations:
+		for i in c.stars.size():
+			if star_reachable(c.id, i):
+				var o := star_option_at(c.id, i)
+				if best.is_empty() or o.cost < best.cost: best = o
+	if best.is_empty():
+		return {"kind": "star", "id": "", "currency": "starlight", "available": false, "cost": INF}
+	return best
+
 
 ## Full-speed output of the clock (ignores the weight's current height and the remontoir).
 func potential() -> float: return f_amp() * yield_per_beat()
@@ -276,20 +338,21 @@ func _apply(o: Dictionary) -> void:
 		"shaft": shaft += 1
 		"rotor": rotor += 1
 		"build", "comp_level": comps[o.id] += 1
-		"star": stars += 1
+		"star": if o.id != "" and not o.id in lit: lit.append(o.id)
 
 
 # ------------------------------------------------------------------ prestige
 func great_year_ready() -> bool:
-	return stars >= int(bal.stars.constellation_size) and comps.get("mercury", 0) > 0
+	return complete("clavis") and comps.get("mercury", 0) > 0
 
 func aeons_on_reset() -> int:
-	return int(floor(sqrt(total_starlight / 50.0)))
+	return int(floor(sqrt(total_starlight / float(bal.get("great_year", {}).get("aeon_div", 50.0)))))
 
 func do_great_year() -> int:
 	var g := aeons_on_reset()
 	aeons += g; great_years += 1; total_starlight = 0.0
-	reset_run(); changed.emit()
+	reset_run()            # the machine is rebuilt; `lit` (the sky) is kept
+	purchased.emit("load", ""); changed.emit()
 	return g
 
 
@@ -297,7 +360,7 @@ func do_great_year() -> int:
 func to_dict() -> Dictionary:
 	return {"v": 2, "ticks": ticks, "starlight": starlight, "total_ticks": total_ticks,
 		"total_starlight": total_starlight, "levels": levels.duplicate(), "regulator": regulator,
-		"weight": weight, "shaft": shaft, "rotor": rotor, "comps": comps.duplicate(), "stars": stars,
+		"weight": weight, "shaft": shaft, "rotor": rotor, "comps": comps.duplicate(), "lit": lit.duplicate(),
 		"height": height, "aeons": aeons, "great_years": great_years, "play_time": play_time}
 
 func from_dict(d: Dictionary) -> void:
@@ -315,7 +378,14 @@ func from_dict(d: Dictionary) -> void:
 	var cs: Dictionary = d.get("comps", {})
 	for k in cs:
 		if comps.has(k): comps[k] = maxi(0, int(cs[k]))
-	stars = maxi(0, int(d.get("stars", 0)))
+	lit.clear()
+	for k in d.get("lit", []):
+		var p := str(k).split(":")
+		var c := constellation(p[0]) if p.size() == 2 else {}
+		if not c.is_empty() and int(p[1]) >= 0 and int(p[1]) < c.stars.size() and not str(k) in lit: lit.append(str(k))
+	if d.has("stars") and not d.has("lit"):     # v0.4 saves: N stars of Clavis in the old unlock order
+		var order := [0, 1, 2, 4, 3, 5, 6]
+		for n in mini(int(d.stars), order.size()): lit.append("clavis:%d" % order[n])
 	height = clampf(float(d.get("height", shaft_height())), 0.0, shaft_height())
 	aeons = maxi(0, int(d.get("aeons", 0))); great_years = maxi(0, int(d.get("great_years", 0)))
 	play_time = float(d.get("play_time", 0.0))

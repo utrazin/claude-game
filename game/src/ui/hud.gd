@@ -179,6 +179,7 @@ func _icon_for(o: Dictionary) -> String:
 		"shaft": return "shaft"
 		"rotor": return "rotor"
 		"star": return "star"
+		"great_year": return "planet"
 		"build", "comp_level":
 			match o.id:
 				"hour_dial": return "dial"
@@ -225,15 +226,16 @@ func _refresh_shop() -> void:
 			key = "stage:" + o.id
 		if o.kind == "build" or o.kind == "comp_level":
 			key = "comp:" + o.id
+		if o.kind == "star": key = "star"
 		keys.append(key)
 		if not rows.has(key):
 			rows[key] = _make_plate(key)
 		var row: Dictionary = rows[key]
 		row.option = o
-		var cost_txt := tr("MAXED") if is_inf(o.cost) else Num.fmt(o.cost) + " " + (tr("TICKS") if o.currency == "ticks" else tr("STARLIGHT"))
+		var cost_txt := "" if o.kind == "great_year" else tr("MAXED") if is_inf(o.cost) else Num.fmt(o.cost) + " " + (tr("TICKS") if o.currency == "ticks" else tr("STARLIGHT"))
 		var info := _info(o)
 		(row.title as Label).text = _title(o)
-		(row.info as Label).text = cost_txt + ("  ·  " + info if info != "" else "")
+		(row.info as Label).text = cost_txt + ("  ·  " if info != "" and cost_txt != "" else "") + info
 		(row.icon as TextureRect).texture = _tex("icon_" + _icon_for(o))
 		_set_plate_state(row)
 	for k in rows.keys():
@@ -252,8 +254,36 @@ func _set_plate_state(row: Dictionary) -> void:
 
 
 func _buy(key: String) -> void:
-	if rows.has(key):
-		eco.buy(rows[key].option)
+	if not rows.has(key): return
+	if rows[key].option.kind == "great_year":
+		_confirm_great_year(); return
+	eco.buy(rows[key].option)
+
+
+## F5: the Great Year rebuilds the machine with Aeons; the sky stays lit.
+func _confirm_great_year() -> void:
+	var p := _framed(); p.set_anchors_preset(Control.PRESET_CENTER)
+	p.offset_left = -360; p.offset_right = 360; p.offset_top = -200; p.offset_bottom = 200
+	var v := VBoxContainer.new(); v.add_theme_constant_override("separation", 12); p.add_child(v)
+	v.add_child(_shadowed(_label(tr("GREAT_YEAR"), 36, C_BRASS, F_TITLE)))
+	var body := _shadowed(_label(tr("GY_BODY") % [eco.aeons_on_reset(), int(round(eco.aeons_on_reset() * 10.0))], 20, C_TEXT))
+	body.autowrap_mode = TextServer.AUTOWRAP_WORD; body.custom_minimum_size.x = 600; v.add_child(body)
+	var h := HBoxContainer.new(); h.add_theme_constant_override("separation", 16); v.add_child(h)
+	for pair in [[tr("GY_GO"), true], [tr("BACK"), false]]:
+		var b := Button.new(); b.text = pair[0]; b.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+		b.focus_mode = Control.FOCUS_NONE; b.custom_minimum_size = Vector2(280, 64)
+		b.add_theme_stylebox_override("normal", _nine("plate_polished", 26)); b.add_theme_stylebox_override("pressed", _nine("plate_polished", 26))
+		b.add_theme_stylebox_override("hover", _nine("plate_hover", 44, 0, 18))
+		b.add_theme_font_override("font", F_TITLE); b.add_theme_font_size_override("font_size", 22)
+		for c in ["font_color", "font_hover_color", "font_pressed_color"]: b.add_theme_color_override(c, C_INK)
+		var go: bool = pair[1]
+		b.pressed.connect(func():
+			if go:
+				Audio.play("chime", -2.0, 0.5)
+				eco.do_great_year(); Game.save_game()
+			p.queue_free())
+		h.add_child(b)
+	get_child(0).add_child(p)
 
 
 # ------------------------------------------------------------------ actions (bottom)
@@ -325,6 +355,8 @@ func _options() -> Array:
 	var s := eco.star_option()
 	if s.available:
 		out.append(s)
+	if eco.great_year_ready():
+		out.push_front({"kind": "great_year", "id": "great_year", "currency": "ticks", "cost": 0.0, "available": true})
 	return out
 
 
@@ -338,11 +370,14 @@ func _title(o: Dictionary) -> String:
 		"rotor": return (tr("BUILD") + " · " + tr("ROTOR")) if o.build else tr("ROTOR") + " · " + tr("LEVEL") % (eco.rotor + 2)
 		"build": return tr("BUILD") + " · " + tr("COMP_" + o.id)
 		"comp_level": return tr("COMP_" + o.id) + " · " + tr("LEVEL") % (eco.comps[o.id] + 1)
-		"star": return tr("STAR")
+		"star": return tr("STAR") + " · " + tr("CONST_" + str(o.id).get_slice(":", 0).to_upper())
+		"great_year": return tr("GREAT_YEAR")
 	return o.id
 
 
 func _info(o: Dictionary) -> String:
+	if o.kind == "great_year": return tr("GY_INFO") % eco.aeons_on_reset()
+	if o.kind == "star": return tr("MAG") % eco.star_mag(o.id)
 	if eco.worsens(o): return tr("NEEDS_WEIGHT")
 	match o.kind:
 		"level": return tr("TEETH") % [eco.teeth(o.index), "%.1f" % eco.ratio(o.index)]
@@ -354,7 +389,7 @@ func _info(o: Dictionary) -> String:
 
 
 func _preview_text(o: Dictionary) -> String:
-	if not o.available or is_inf(o.cost):
+	if not o.available or is_inf(o.cost) or o.kind == "great_year":
 		return ""
 	var p := eco.preview(o)
 	var now := eco.production()

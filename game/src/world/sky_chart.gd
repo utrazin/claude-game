@@ -1,19 +1,19 @@
 class_name SkyChart
 extends Node3D
-## The dome is the upgrade tree (pillar "the world is the dial"). Each star of the first
-## constellation, "The Key" (Clavis), is a purchasable node; lit stars are joined by gold lines.
-## A star can be lit only if it is adjacent to an already lit star (or is the root).
+## The dome is the upgrade tree (pillar "the world is the dial"), D16 / CRIT-01 F4-F5.
+## Constellations live in regions of the dome; a region opens with an orbit (Moon → Clavis,
+## Mercury → Rota) or with the first Great Year (Ventus). Stars have magnitudes (bright = costly,
+## strong); a star can be lit only from a lit neighbour or the root. The sky persists across
+## Great Years. Click a pulsing star to light it.
 
 const DOME_R := 6.3
-## (azimuth°, elevation°) of each star, original constellation shaped like a winding key.
-const STARS := [[-20, 58], [-8, 63], [6, 61], [14, 54], [-2, 70], [-14, 74], [20, 67]]
-const EDGES := [[0, 1], [1, 2], [2, 3], [1, 4], [4, 5], [2, 6]]
 
 var eco: Economy
 var focus := 0.0   ## 0..1 during the observatory shot: lines and stars brighten
 var base_y := 5.5
-var nodes: Array[MeshInstance3D] = []
-var lines: Array[MeshInstance3D] = []
+var stars := {}    ## "cid:i" -> MeshInstance3D
+var lines := []    ## [cid, a, b, MeshInstance3D]
+var groups := {}   ## cid -> Node3D (hidden while the region is closed)
 var _lit_m: StandardMaterial3D
 var _dim_m: StandardMaterial3D
 var _avail_m: StandardMaterial3D
@@ -23,28 +23,28 @@ var _line_m: StandardMaterial3D
 func setup(e: Economy, y: float) -> void:
 	eco = e; base_y = y
 	_lit_m = _emit(Color(1.0, 0.86, 0.55), 9.0)
-	_avail_m = _emit(Color(0.7, 0.78, 1.0), 2.5)
+	_avail_m = _emit(Color(0.7, 0.78, 1.0), 3.5)
 	_dim_m = _emit(Color(0.6, 0.68, 0.95), 3.0)
 	_line_m = _emit(Color(0.95, 0.75, 0.4), 2.2)
-	for i in STARS.size():
-		var mi := MeshInstance3D.new(); var sm := SphereMesh.new(); sm.radius = 0.045; sm.height = 0.09
-		mi.mesh = sm; mi.position = _pos(i); add_child(mi); nodes.append(mi)
-		var area := Area3D.new(); var cs := CollisionShape3D.new(); var sp := SphereShape3D.new(); sp.radius = 0.35
-		cs.shape = sp; area.add_child(cs); mi.add_child(area)
-		area.input_event.connect(_on_star_input.bind(i))
-	for ed in EDGES:
-		var a := _pos(ed[0]); var b := _pos(ed[1])
-		var ln := MeshInstance3D.new(); var bx := BoxMesh.new(); bx.size = Vector3(0.018, 0.018, a.distance_to(b) - 0.2)
-		ln.mesh = bx; ln.material_override = _line_m; add_child(ln)
-		ln.look_at_from_position((a + b) * 0.5, b, Vector3.UP); lines.append(ln)
+	for c in eco.bal.sky.constellations:
+		var g := Node3D.new(); g.name = c.id; add_child(g); groups[c.id] = g
+		for i in c.stars.size():
+			var key := "%s:%d" % [c.id, i]
+			var mi := MeshInstance3D.new(); var sm := SphereMesh.new()
+			var r := 0.06 - 0.012 * (int(c.stars[i][2]) - 1)          # magnitude → size
+			sm.radius = r; sm.height = r * 2.0
+			mi.mesh = sm; mi.position = _pos(c.stars[i]); g.add_child(mi); stars[key] = mi
+			var area := Area3D.new(); var cs := CollisionShape3D.new(); var sp := SphereShape3D.new(); sp.radius = 0.35
+			cs.shape = sp; area.add_child(cs); mi.add_child(area)
+			area.input_event.connect(_on_star_input.bind(c.id, i))
+		for ed in c.edges:
+			var a := _pos(c.stars[ed[0]]); var b := _pos(c.stars[ed[1]])
+			var ln := MeshInstance3D.new(); var bx := BoxMesh.new(); bx.size = Vector3(0.018, 0.018, a.distance_to(b) - 0.2)
+			ln.mesh = bx; ln.material_override = _line_m; g.add_child(ln)
+			ln.look_at_from_position((a + b) * 0.5, b, Vector3.UP); lines.append([c.id, ed[0], ed[1], ln])
 	eco.changed.connect(refresh)
+	eco.purchased.connect(func(_k, _i): refresh())
 	refresh()
-
-
-func centre() -> Vector3:
-	var c := Vector3.ZERO
-	for i in STARS.size(): c += _pos(i)
-	return c / STARS.size()
 
 
 func _emit(c: Color, energy: float) -> StandardMaterial3D:
@@ -54,47 +54,54 @@ func _emit(c: Color, energy: float) -> StandardMaterial3D:
 	return m
 
 
-func _pos(i: int) -> Vector3:
-	var az := deg_to_rad(STARS[i][0]); var el := deg_to_rad(STARS[i][1])
+func _pos(st: Array) -> Vector3:
+	var az := deg_to_rad(float(st[0])); var el := deg_to_rad(float(st[1]))
 	return Vector3(sin(az) * cos(el), sin(el), -cos(az) * cos(el)) * DOME_R + Vector3(0, base_y, 0)
 
 
-## Star i is "lit" if i < eco.stars mapped through a deterministic unlock order (tree walk).
-func order() -> Array:
-	return [0, 1, 2, 4, 3, 5, 6]
-
-
-func lit(i: int) -> bool:
-	var size: int = eco.bal.stars.constellation_size
-	return order().find(i) < eco.stars % (size + 1) or eco.stars >= size
-
-
-func next_star() -> int:
-	return order()[eco.stars] if eco.stars < STARS.size() else -1
+## Centre of the constellation the player should look at now (first open and incomplete).
+func centre() -> Vector3:
+	var target: Dictionary = eco.bal.sky.constellations[0]
+	for c in eco.bal.sky.constellations:
+		if eco.gate_open(c) and not eco.complete(c.id):
+			target = c; break
+	var p := Vector3.ZERO
+	for st in target.stars: p += _pos(st)
+	return p / target.stars.size()
 
 
 func refresh() -> void:
-	var nxt := next_star()
-	var can: bool = eco.star_option().available
-	for i in nodes.size():
-		var m := _dim_m
-		if lit(i): m = _lit_m
-		elif i == nxt and can: m = _avail_m
-		nodes[i].material_override = m
-		nodes[i].scale = Vector3.ONE * (1.6 if lit(i) else (1.25 if i == nxt and can else 0.8))
-	for k in EDGES.size():
-		lines[k].visible = lit(EDGES[k][0]) and lit(EDGES[k][1])
+	for c in eco.bal.sky.constellations:
+		var any_lit := false
+		for k in eco.lit: if k.begins_with(c.id + ":"): any_lit = true
+		groups[c.id].visible = eco.gate_open(c) or any_lit     # a lit sky stays visible after a Great Year
+	for key in stars:
+		var p: PackedStringArray = key.split(":")
+		var mi: MeshInstance3D = stars[key]
+		var on: bool = key in eco.lit
+		var o := eco.star_option_at(p[0], int(p[1]))
+		var can: bool = o.available and eco.starlight >= o.cost
+		mi.material_override = _lit_m if on else (_avail_m if o.available else _dim_m)
+		mi.set_meta("pulse", can)
+		mi.scale = Vector3.ONE * (1.6 if on else (1.2 if o.available else 0.8))
+	for l in lines:
+		(l[3] as MeshInstance3D).visible = ("%s:%d" % [l[0], l[1]]) in eco.lit and ("%s:%d" % [l[0], l[2]]) in eco.lit
 
 
-func _on_star_input(_cam: Node, event: InputEvent, _pos3: Vector3, _n: Vector3, _shape: int, i: int) -> void:
+func _on_star_input(_cam: Node, event: InputEvent, _pos3: Vector3, _n: Vector3, _shape: int, cid: String, i: int) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		if i == next_star():
-			eco.buy(eco.star_option())
+		eco.buy(eco.star_option_at(cid, i))
 
 
-func _process(_d: float) -> void:
+var _t_refresh := 0.0
+
+func _process(d: float) -> void:
 	var t := Time.get_ticks_msec() * 0.001
 	if _line_m: _line_m.emission_energy_multiplier = 2.2 * (1.0 + 1.5 * focus)
-	var nxt := next_star()
-	if nxt >= 0 and nxt < nodes.size() and not lit(nxt):
-		nodes[nxt].scale = Vector3.ONE * (1.15 + 0.15 * sin(t * 3.0))
+	_t_refresh += d
+	if _t_refresh > 0.5:            # starlight accrues continuously: re-check which stars are affordable
+		_t_refresh = 0.0; refresh()
+	for key in stars:
+		var mi: MeshInstance3D = stars[key]
+		if mi.get_meta("pulse", false):
+			mi.scale = Vector3.ONE * (1.15 + 0.2 * sin(t * 3.0))

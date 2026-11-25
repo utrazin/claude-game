@@ -53,8 +53,23 @@ func _init() -> void:
 	check(not e.star_option().available, "stars locked before a celestial complication")
 	e.buy(e.comp_option(e.bal.complications[1]))
 	check(e.star_option().available and e.starlight_rate() > 0.0, "moon unlocks starlight")
-	e.stars = 7; e.comps["mercury"] = 1; e.total_starlight = 5000
-	check(e.great_year_ready() and e.do_great_year() == 10 and e.levels[1] == 0, "great year")
+	# D16: adjacency, magnitude, bonuses, persistent sky
+	check(e.star_reachable("clavis", 0) and not e.star_reachable("clavis", 2), "only the root (or a neighbour of a lit star) is reachable")
+	check(e.star_cost("clavis", 1) > e.star_cost("clavis", 3), "bright stars cost more than faint ones")
+	check(not e.star_reachable("rota", 0), "Rota's region is closed until Mercury")
+	e.starlight = 1e12
+	var y0 := e.yield_per_beat()
+	for n in 7:
+		e.buy(e.star_option())
+	check(e.complete("clavis") and e.yield_per_beat() > y0 * 2.0, "completing Clavis doubles yield")
+	e.comps["mercury"] = 1; e.total_starlight = 5000
+	check(e.star_reachable("rota", 0), "Mercury opens Rota")
+	var lit_before := e.lit.duplicate()
+	var expect_aeons := e.aeons_on_reset()
+	check(e.great_year_ready() and expect_aeons > 0 and e.do_great_year() == expect_aeons and e.levels[1] == 0 and e.lit == lit_before, "great year rebuilds the machine and keeps the sky")
+	check(e.star_reachable("ventus", 0), "a Great Year opens Ventus")
+	var e4 := Economy.new(); e4.from_dict({"stars": 3})
+	check(e4.lit == ["clavis:0", "clavis:1", "clavis:2"], "v0.4 saves migrate star count to lit stars")
 	check(Num.fmt(1234567.0) == "1.23M", "number format")
 	# D15: the bench never sells a worse clock
 	var w := Economy.new(); w.ticks = 1e9

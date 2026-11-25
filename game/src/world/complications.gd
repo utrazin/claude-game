@@ -150,5 +150,5 @@ func awake() -> float:
 	if eco.comps.get("hour_dial", 0) > 0: a += 0.06
 	if eco.comps.get("moon", 0) > 0: a += 0.12
 	if eco.comps.get("mercury", 0) > 0: a += 0.12
-	a += 0.64 * clampf(float(eco.stars) / float(eco.bal.stars.constellation_size), 0.0, 1.0)
+	a += 0.64 * clampf(float(eco.stars) / 18.0, 0.0, 1.0)
 	return clampf(a, 0.0, 1.0)

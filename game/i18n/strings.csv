@@ -70,3 +70,11 @@ COACH_BUY,"Polished plates on the bench are parts you can afford. Fit one to the
 COACH_PREVIEW,"Hover a plate to preview the change before buying. The bench never sells a worse clock.","Passe o mouse numa etiqueta para ver a mudança antes de comprar. A bancada nunca vende um relógio pior."
 COACH_REMONTOIR,"The weight is full. Keep winding to charge the remontoir: the clock beats faster for a while.","O peso está cheio. Continue dando corda para carregar o remontoir: o relógio bate mais rápido por um tempo."
 COACH_SKY,"You have Starlight for a star. Look at the sky and click the pulsing one.","Você tem Luz Estelar para uma estrela. Olhe o céu e clique na que pulsa."
+CONST_CLAVIS,The Key,A Chave
+CONST_ROTA,The Wheel,A Roda
+CONST_VENTUS,The Wind,O Vento
+MAG,magnitude %d,magnitude %d
+GREAT_YEAR,The Great Year,O Grande Ano
+GY_INFO,+%d Aeons · the sky stays lit,+%d Éons · o céu continua aceso
+GY_BODY,"The heavens have turned once. Dismantle the machine and build it again, wiser: you gain %d Aeons (+%d%% yield, forever). Every lit star stays in the sky, and a new region of the dome opens.","O céu deu uma volta completa. Desmonte a máquina e construa de novo, mais sábio: você ganha %d Éons (+%d%% de rendimento, para sempre). Toda estrela acesa continua no céu, e uma nova região da cúpula se abre."
+GY_GO,Begin the Great Year,Começar o Grande Ano

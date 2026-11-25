@@ -26,8 +26,8 @@ Fase 3 — Prototyping. Protótipo v4 jogável: economia v0.4 (energia: peso, co
 ## Próximas ações
 1. UI v1 feita (proto-v7: `src/ui/hud.gd`, `gauge.gd`, texturas de `tools/ui/gen_ui.py`, fonte EB Garamond OFL). proto-v8: tela de título, opções (volumes, gráficos, idioma, FPS), Esc reabre o menu. proto-v9: tutorial de primeira vez (`src/ui/coach.gd`: corda, compra, prévia, remontoir, céu).
 2. Rotor de vento na cúpula; peso e corrente reais; manivela visível; textura de pedra em blocos.
-3. Constelação com magnitude e vizinhança (F4) e Polar aberta pelo mostrador (F2).
-4. Simulador v2 com planejador e Grande Ano; Lua em ≤15 min.
+3. Feito: céu v2 e Grande Ano (D16). Pendente: Polar aberta pelo mostrador (F2), conteúdo após o Vento (mais constelações/eras), skin de era por Grande Ano.
+4. Ritmo: `godot --headless --path game -s res://tests/naive_player.gd` (economia real). Lua 14,9 min.
 5. Menu de opções (volume, gráficos, idioma).
 - Build: `cd game && godot --headless --export-release "Windows Desktop" ../build/windows/Astrarium.exe` (templates 4.7.2 em ~/.local/share/godot/export_templates).
 ## Como rodar
