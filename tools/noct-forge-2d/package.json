@@ -1,0 +1,41 @@
+{
+  "name": "noct-asset-forge",
+  "version": "2.5.0",
+  "description": "Programmatic visual asset creation repository for coding agents",
+  "private": true,
+  "license": "SEE LICENSE IN LICENSE",
+  "type": "module",
+  "scripts": {
+    "view": "vite",
+    "build": "vite build",
+    "export": "tsx tools/export.ts",
+    "new-project": "tsx tools/forge.ts new-project",
+    "new-asset": "tsx tools/forge.ts new-asset",
+    "new-sandbox": "tsx tools/forge.ts new-sandbox",
+    "list": "tsx tools/forge.ts list",
+    "check": "tsx tools/forge.ts check",
+    "inspect": "tsx tools/forge.ts inspect",
+    "capture": "tsx tools/forge.ts capture",
+    "docs:api": "tsx scripts/generate-api-docs.ts",
+    "doctor": "tsx scripts/doctor.ts",
+    "test": "tsx tests/core.test.ts && tsx tests/boundary.test.ts && tsx tests/docs.test.ts && tsx tests/cli.test.ts && npm run test:viewer",
+    "test:viewer": "tsx tests/session.test.ts && tsx tests/viewer.test.ts",
+    "sync:viewer-runtime": "tsx scripts/sync-viewer-runtime.ts",
+    "typecheck:runtime": "tsc --noEmit -p tsconfig.runtime.json"
+  },
+  "dependencies": {
+    "paper": "^0.12.18",
+    "picocolors": "^1.1.1",
+    "playwright": "^1.50.1",
+    "simplex-noise": "^4.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.5",
+    "tsx": "^4.19.3",
+    "typescript": "^5.7.3",
+    "vite": "^6.2.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

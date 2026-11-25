@@ -1,0 +1,53 @@
+{
+  "assets": [
+    {
+      "id": "fence",
+      "output": "assets/models/fence.glb",
+      "status": "passed",
+      "stats": {
+        "size": [
+          2,
+          1,
+          0.11999999731779099
+        ],
+        "triangles": 60,
+        "finite": true,
+        "clips": []
+      },
+      "warnings": 0,
+      "visualReview": "pending"
+    },
+    {
+      "id": "sdf_rock",
+      "output": "assets/models/sdf_rock.glb",
+      "status": "passed",
+      "stats": {
+        "size": [
+          1.3069869875907898,
+          1.0223028659820557,
+          1.1144132614135742
+        ],
+        "triangles": 3852,
+        "finite": true,
+        "clips": []
+      },
+      "warnings": 0,
+      "visualReview": "pending"
+    },
+    {
+      "id": "carrot_icon",
+      "output": "assets/images/carrot_icon.png",
+      "status": "passed",
+      "stats": {
+        "size": [
+          128,
+          128
+        ],
+        "visible": 5181,
+        "transparent": 11203
+      },
+      "warnings": 0,
+      "visualReview": "pending"
+    }
+  ]
+}

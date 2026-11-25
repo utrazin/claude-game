@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "@core": ["core/index.ts"],
+      "@core/brush": ["core/brush/index.ts"],
+      "@core/pixel": ["core/pixel.ts"]
+    }
+  },
+  "include": [
+    "core/**/*",
+    "tools/**/*",
+    "viewer/**/*",
+    "templates/**/*",
+    "projects/**/*"
+  ]
+}

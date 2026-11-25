@@ -1,0 +1,12 @@
+{
+  "name": "noct-asset-forge-3d-bb",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dist": "py -3.12 scripts/build_dist.py",
+    "doctor": "py -3.12 -m Tools.forge doctor"
+  },
+  "devDependencies": {
+    "gltf-validator": "2.0.0-dev.3.10"
+  }
+}

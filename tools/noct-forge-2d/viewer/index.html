@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NoctAssetForge - Asset Inspector</title>
+    <link rel="stylesheet" href="/viewer/style.css" /><link rel="stylesheet" href="/viewer/forge-theme.css" />
+  </head>
+  <body>
+    <div id="app">
+      <!-- Top Navigation Header -->
+      <header class="topbar">
+        <div class="brand">
+          <div class="logo-icon">N</div>
+          <div class="brand-text">
+            <span class="brand-name">NoctAssetForge</span>
+            <span class="brand-subtitle">Biblioteca 2D</span>
+          </div>
+        </div>
+
+        <div class="search-box">
+          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="filter-input" placeholder="Buscar assets por nome ou caminho…" />
+          <button id="clear-filter" class="btn-clear" style="display: none;">✕</button>
+        </div>
+
+        <div class="topbar-actions"><button id="sidebar-toggle" class="panel-toggle" aria-label="Mostrar projetos">Projetos</button><span id="connection-status" class="forge-status" role="status">Conectando…</span><button id="focus-toggle" class="panel-toggle">Foco</button>
+          <div id="preview-links" class="preview-links"></div>
+          <div class="status-badge" id="status-badge">
+            <span class="status-dot"></span>
+            <span id="asset-total-count">0 assets</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Layout -->
+      <div class="main-container">
+        <!-- Sidebar Explorer -->
+        <aside class="sidebar">
+          <div class="sidebar-header">
+            <span class="sidebar-title">Projetos</span>
+            <div class="sidebar-header-actions">
+              <button id="toggle-all-btn" class="icon-btn" title="Minimizar / Expandir todas as pastas">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M7 15l5 5 5-5M7 9l5-5 5 5"/>
+                </svg>
+              </button>
+              <button id="refresh-btn" class="icon-btn" title="Refresh asset catalog">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div id="tree-container" class="tree-container">
+            <div class="tree-loading">Loading asset catalog...</div>
+          </div>
+        <details style="padding:12px"><summary>Sandboxes</summary><div id="sandbox-links" style="display:grid;gap:8px;padding-top:8px"></div></details></aside>
+
+        <!-- Content Area -->
+        <main class="content-area" id="content-area">
+          <!-- Populated dynamically via main.ts -->
+        </main>
+      </div>
+    </div>
+
+    <script type="module" src="/viewer/main.ts"></script>
+  </body>
+</html>

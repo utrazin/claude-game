@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.py[cod]
+.runtime/
+
+# OS / editor
+Thumbs.db
+Desktop.ini
+.DS_Store
+*.log
+scratch/
+test-results/
+playwright-report/
+
+# Godot 4 (keep *.import files: they are part of the project in Godot 4)
+.godot/
+/build/
+/exports/
+
+# Tool-specific temp
+tools/noct-forge-2d/projects/**/temp/
+tools/noct-forge-3d/projects/*/history/
+.forge-project.lock

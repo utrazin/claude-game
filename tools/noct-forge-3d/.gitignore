@@ -1,0 +1,25 @@
+# Build release output
+build/release/
+
+# Previous repository metadata, retained only for local recovery.
+/.git-previous-backup/
+
+# Python-generated caches.
+__pycache__/
+*.py[cod]
+
+# Backup files and archives
+*.bak
+*.zip
+
+# Recovery copies of hand-edited models.
+projects/*/history/
+
+# Optional local converters and development dependencies.
+.runtime/
+node_modules/
+.forge-project.lock
+
+# review renders of the cloaked_cat production (regenerated every round; the delivery sheets are committed)
+projects/cloaked_cat/production/renders/
+projects/cloaked_cat/production/inspection/

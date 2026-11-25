@@ -1,0 +1,14 @@
+{
+  "name": "project-asset-kit",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test kit.test.mjs",
+    "preview": "node cli.mjs preview",
+    "export": "node cli.mjs export",
+    "verify": "node cli.mjs verify",
+    "check": "node cli.mjs check"
+  },
+  "dependencies": {"three": "0.187.0", "manifold-3d": "3.5.4", "gltf-validator": "2.0.0-dev.3.10"},
+  "devDependencies": {"playwright": "1.64.1"}
+}

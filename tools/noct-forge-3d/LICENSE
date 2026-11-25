@@ -1,0 +1,46 @@
+NoctAssetForge3DBB License
+
+Copyright (c) 2026. All rights reserved.
+
+1. Definitions
+
+"Software" means the NoctAssetForge3DBB repository in any form: its source code, scripts,
+documentation, skills, templates, tests, tools and configuration, including any
+copy or modification of them.
+
+"Outputs" means any file produced by running the Software, including .bbmodel, .glb, PNG,
+animations, textures and other 3D model, image or data files exported from it.
+
+"Redistribute" means to provide copies of the Software, or any part of it, to a third
+party, by any means, including by sale, sublicense, publication, hosting, or making it
+available as a service or as part of another product, library, tool or framework.
+
+2. Permitted use
+
+You may use, run, copy within your own organization or projects, and modify the Software
+for any purpose, including commercial production, client work, and products sold to
+end users, as long as you comply with section 3.
+
+You own the Outputs you create. You may use, sell, distribute and modify Outputs without
+restriction, including inside commercial games, applications and other products.
+Outputs must not include the Software's source code or the engine's runtime code.
+
+3. Restrictions
+
+You may not Redistribute the Software, in original or modified form, and you may not sell
+the Software, or offer it for sale, as a standalone product or as part of another product.
+
+Modified versions are subject to the same restriction: you may keep them for your own use
+but may not Redistribute them.
+
+4. No warranty
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND. IN NO EVENT SHALL THE
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY ARISING FROM, OUT OF,
+OR IN CONNECTION WITH THE SOFTWARE OR ITS USE.
+
+5. Termination
+
+This license ends automatically if you breach section 3. Upon termination, you must stop
+using the Software and delete your copies. Outputs you already created remain yours, and
+section 2 continues to apply to them.

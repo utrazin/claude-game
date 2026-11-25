@@ -1,0 +1,26 @@
+const assert = require('node:assert/strict');
+global.THREE = require('../Tools/viewer/vendor/three.min.js');
+global.requestAnimationFrame = () => 1;
+global.cancelAnimationFrame = () => {};
+const { GlbClipController, BBModelClipController } = require('../Tools/viewer/js/asset_loader.js');
+const root = new THREE.Object3D();
+const clip = new THREE.AnimationClip('walk', 1, [new THREE.VectorKeyframeTrack('.position', [0, 1], [0, 0, 0, 1, 0, 0])]);
+const glb = new GlbClipController(root, [clip]);
+glb.select('walk'); glb.seek(0.8);
+assert.ok(Math.abs(root.position.x - 0.8) < 1e-6);
+glb.repeat = 'once'; glb.speed = 0.5; glb.play(); glb._frame(0); glb._frame(1000);
+assert.equal(glb.time, 1); assert.equal(glb.playing, false);
+assert.equal(root.position.x, 1); // one-shot completion must retain the last pose
+glb.seek(0.2); assert.ok(Math.abs(root.position.x - 0.2) < 1e-6);
+glb.repeat = 'loop'; glb.speed = 1; glb.play(); glb._frame(0); glb._frame(1500);
+assert.ok(Math.abs(glb.time - 0.7) < 1e-6);
+glb.basePose(); assert.equal(root.position.x, 0); assert.equal(glb.clip, null);
+glb.dispose();
+const parser = { controls: new Map(), updateSkinning() {} };
+const bb = new BBModelClipController(parser, [{ name: 'walk', length: 1, loop: 'loop', animators: {} }]);
+bb.select('walk'); bb.repeat = 'once'; bb.speed = 0.5; bb.play(); bb.player._frame(0); bb.player._frame(3000);
+assert.equal(bb.time, 1); assert.equal(bb.playing, false);
+bb.repeat = 'loop'; bb.play(); bb.player._frame(0); bb.player._frame(3000);
+assert.equal(bb.time, 0.5); assert.equal(bb.playing, true);
+bb.pause(); assert.equal(bb.playing, false); bb.basePose(); assert.equal(bb.clip, null); bb.dispose();
+console.log('Playback: BBModel/GLB speed, repetition, pause, final pose, seek and base pose passed.');

@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Production builds
+dist/
+
+# Scratch & temporary project directories
+projects/**/temp/
+
+# System & OS files
+.DS_Store
+Thumbs.db
+
+# Playwright test-results
+test-results/
+playwright-report/
+.runtime/
+
+# Editor / Art scratch files
+*.kra
+.*.kra
+build/noct-asset-forge/
+build/release/

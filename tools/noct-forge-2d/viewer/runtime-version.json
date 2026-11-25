@@ -1,0 +1,8 @@
+{
+  "version": "2.0.0",
+  "canonicalSource": "NoctAssetForge2D/viewer",
+  "hashes": {
+    "forge-session.js": "1dbb147264924da0a66f9b1824852e9fedfec864535c43a958c3ca48f960e03a",
+    "forge-theme.css": "40190471c11bf70432d8b90610914983be72da4debbb2770b62e68061747dd8c"
+  }
+}

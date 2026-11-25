@@ -1,0 +1,7 @@
+{
+  "assets": [
+    {"id":"fence", "kind":"glb", "source":"asset-workbench/sources/fence.js", "output":"assets/models/fence.glb", "size":[2,1,0.12], "maxTriangles":500},
+    {"id":"sdf_rock", "kind":"glb", "source":"asset-workbench/sources/sdf_rock.js", "output":"assets/models/sdf_rock.glb", "maxTriangles":20000},
+    {"id":"carrot_icon", "kind":"png", "source":"asset-workbench/sources/carrot_icon.js", "output":"assets/images/carrot_icon.png", "size":[128,128], "transparent":true}
+  ]
+}

@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="pt-BR"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Assets · Visualizador</title>
+<script type="importmap">{"imports":{"three":"/vendor/three/build/three.module.js","three/addons/":"/vendor/three/examples/jsm/"}}</script>
+<body>
+<header class="topbar"><span class="workspace-icon" aria-hidden="true">◈</span><span>Workspace</span><span class="slash">/</span><span class="breadcrumb">Assets</span><span class="live"><i></i> Atualização automática</span></header>
+<main class="workbench">
+  <aside class="explorer" aria-label="Explorador de arquivos">
+    <div class="panel-heading"><h1>Explorador</h1><span id="asset-count">0</span></div>
+    <div class="search-wrap"><input id="asset-search" type="search" placeholder="Buscar asset…" aria-label="Buscar asset"></div>
+    <nav id="file-tree" aria-label="Arquivos do projeto"></nav>
+    <select id="assets" aria-label="Asset" hidden></select>
+    <div class="explorer-footer">Arquivos do projeto</div>
+  </aside>
+  <section class="preview" aria-label="Prévia do asset">
+    <div class="toolbar"><div class="current-file"><span id="asset-kind">—</span><span id="asset-name">Prévia</span></div><label class="mode-label"><span class="sr-only">Visualização</span><select id="mode" aria-label="Visualização"><option value="auto">Automática</option><option value="file">Arquivo exportado</option><option value="source">Fonte</option></select></label><button id="download" type="button"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v9m-3-3 3 3 3-3M4 13v4h12v-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Baixar cópia</button></div>
+    <div class="stage"><canvas></canvas></div>
+    <div class="preview-hint"><span>Arraste para orbitar</span><span>Scroll para aproximar</span></div>
+  </section>
+  <aside class="inspector"><div class="panel-heading"><h2>Inspetor</h2></div><div class="inspector-content"><dl id="properties"><dt>Asset</dt><dd>Carregando…</dd></dl><details><summary>Dados técnicos</summary><pre id="stats"></pre></details></div></aside>
+</main>
+<footer><span class="status-dot" aria-hidden="true"></span><p id="status" role="status">Carregando visualizador…</p></footer>
+<script type="module" src="/kit/viewer.js"></script></body></html>

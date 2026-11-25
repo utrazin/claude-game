@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Noct · Visualizador 3D</title>
+  <link rel="stylesheet" href="/lib/forge-theme.css"><link rel="stylesheet" href="/css/workspace.css">
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">N</span><strong>Noct</strong><span class="app-label">Visualizador 3D</span></div>
+    <span class="header-divider"></span><span id="project-name" class="project-breadcrumb">Biblioteca</span>
+    <div class="topbar-actions">
+      <span id="connection-status" class="forge-status" role="status">Conectando…</span>
+      <button id="sidebar-toggle" class="quiet-button" aria-label="Mostrar biblioteca">Biblioteca</button>
+      <button id="properties-toggle" class="quiet-button" aria-label="Mostrar inspector">Inspector</button>
+      <button id="focus-toggle" class="quiet-button">Foco</button>
+      <button class="quiet-button" onclick="capturePng()" title="Salvar a imagem do viewport">Capturar imagem</button>
+    </div>
+  </header>
+  <div class="main-container">
+    <aside class="sidebar" id="explorer-sidebar" aria-label="Biblioteca de assets">
+      <div class="library-heading"><h2>Biblioteca</h2><button id="refresh-btn" class="icon-button" onclick="manualRefresh()" aria-label="Atualizar catálogo" title="Atualizar catálogo">↻</button></div>
+      <div class="project-picker"><label for="project-select">Projeto</label><select id="project-select" aria-label="Projeto"><option>Carregando…</option></select></div>
+      <div class="library-search"><input id="filter-input" type="search" placeholder="Buscar asset…" aria-label="Buscar asset" oninput="handleSearch(this.value)"><button id="clear-filter" hidden onclick="clearSearch()">Limpar</button></div>
+      <div class="list-heading"><span>Assets</span><span id="asset-total-count">—</span></div>
+      <nav id="explorer-tree" class="asset-list" aria-label="Assets do projeto"></nav>
+      <details id="sandbox-section" hidden class="sandbox-section"><summary>Sandboxes</summary><div id="sandbox-list"></div></details>
+      <div class="library-footnote">Selecione um asset para abrir.</div>
+    </aside>
+    <main class="content-area" id="content-area">
+      <div id="viewport-view">
+        <header id="model-badge" class="asset-header">
+          <div class="asset-heading"><strong id="badge-name">Selecione um asset</strong><span id="badge-meta">Inspeção de modelos e animações</span></div>
+          <div class="asset-options">
+            <div id="format-panel" hidden><label for="format-select">Versão</label><select id="format-select" onchange="switchFormat(this.value)"></select></div>
+            <div id="variant-panel" hidden><label for="texture-select">Textura</label><select id="texture-select" onchange="selectTextureVariant(this.value)"></select></div>
+            <button class="quiet-button frame-button" onclick="if(currentBbox) sceneSetup.fitToBbox(currentBbox)" title="Enquadrar o modelo inteiro">Enquadrar</button>
+          </div>
+          <p id="asset-message" role="status"></p>
+        </header>
+        <div class="stage-wrap">
+          <div id="canvas-container" tabindex="0" aria-label="Visualização 3D"></div>
+          <div id="loading-overlay" role="status"><span class="spinner"></span><strong id="loading-text">Abrindo biblioteca…</strong></div>
+          <div id="stage-empty" hidden><span class="empty-symbol">◇</span><h2 id="stage-empty-title"></h2><p id="stage-empty-description"></p><button id="stage-retry" hidden onclick="selectAsset(activeAsset,activeProject)">Tentar novamente</button></div>
+          <div class="viewport-hint">Arraste para orbitar <span>·</span> Scroll para aproximar <span>·</span> Botão direito para mover</div>
+        </div>
+        <aside id="toolbar" aria-label="Inspector do modelo">
+          <div class="inspector-tabs" role="tablist" aria-label="Inspector">
+            <button role="tab" data-inspector-tab="clips" onclick="setInspectorTab('clips')">Animações <span id="clip-count">0</span></button>
+            <button role="tab" data-inspector-tab="hierarchy" onclick="setInspectorTab('hierarchy')" class="active" aria-selected="true">Hierarquia</button>
+            <button role="tab" data-inspector-tab="view" onclick="setInspectorTab('view')">Visual</button>
+          </div>
+          <section data-inspector-pane="clips" hidden class="inspector-pane clip-pane" role="tabpanel">
+            <div class="pane-heading"><h2>Animações</h2><span>Selecione para inspecionar</span></div>
+            <input id="clip-search" type="search" placeholder="Buscar animação…" aria-label="Buscar animação">
+            <div id="clip-list" role="list" aria-label="Animações do modelo"></div>
+            <p class="pane-help">Clique no nome para selecionar. Use ▶ para reproduzir uma animação.</p>
+          </section>
+          <section data-inspector-pane="hierarchy" class="inspector-pane hierarchy-pane" role="tabpanel">
+            <div class="pane-heading"><h2>Hierarquia</h2><span>Estrutura do modelo</span></div>
+            <input id="hierarchy-search" type="search" placeholder="Buscar elemento…" aria-label="Buscar na hierarquia" oninput="inspector?.filterTree(this.value)">
+            <div id="outliner-panel"><div id="outliner-tree" role="tree" aria-label="Elementos do modelo"></div></div>
+            <div class="hierarchy-options"><label><input type="checkbox" id="chk-bones" onchange="toggleBones(this.checked)"> Esqueleto</label><label><input type="checkbox" id="chk-pivots" onchange="togglePivots(this.checked)"> Pivôs</label></div>
+            <div class="selection-info"><span>Elemento selecionado</span><strong id="selection-name">Nenhum elemento selecionado</strong><p id="selection-transform">Selecione um item na hierarquia para inspecioná-lo.</p></div>
+          </section>
+          <section data-inspector-pane="view" hidden class="inspector-pane visual-pane" role="tabpanel">
+            <div class="pane-heading"><h2>Visualização</h2><span>Preferências de inspeção</span></div>
+            <div class="settings-group"><div class="setting-heading"><h3>Câmera</h3><button id="btn-cam-proj" class="quiet-button" onclick="toggleCameraProjection()">Perspectiva</button></div>
+              <div class="view-presets"><button id="btn-view-iso" class="active" onclick="setView('iso')">Isométrica</button><button id="btn-view-front" onclick="setView('front')">Frente</button><button id="btn-view-side" onclick="setView('right')">Direita</button><button id="btn-view-left" onclick="setView('left')">Esquerda</button><button id="btn-view-top" onclick="setView('top')">Topo</button><button id="btn-view-bottom" onclick="setView('bottom')">Base</button><button id="btn-view-back" onclick="setView('back')">Traseira</button></div>
+            </div>
+            <div class="settings-group"><h3>Aparência</h3><label class="toggle-row">Iluminação<input id="chk-shading" type="checkbox" checked onchange="toggleShading(this.checked)"></label><label class="toggle-row">Texturas<input id="chk-texture" type="checkbox" checked onchange="toggleTexture(this.checked)"></label><label class="toggle-row">Suavizar texturas<input id="chk-smooth" type="checkbox" onchange="setTextureFilter(this.checked)"></label><label class="toggle-row">Wireframe<input id="chk-wireframe" type="checkbox" onchange="toggleWireframe(this.checked)"></label><label class="toggle-row">Grade e eixos<input id="chk-grid" type="checkbox" checked onchange="toggleGrid(this.checked)"></label></div>
+            <div id="reference-panel" hidden class="settings-group"><h3>Referência</h3><label class="toggle-row">Mostrar referência<input id="chk-ref-visible" type="checkbox" checked onchange="toggleRefVisible(this.checked)"></label><div class="view-presets"><button id="btn-ref-backdrop" class="active" onclick="setRefMode('backdrop')">Fundo</button><button id="btn-ref-overlay" onclick="setRefMode('overlay')">Sobreposição</button></div><label class="range-label">Opacidade <output id="lbl-ref-opacity">50%</output><input id="rng-ref-opacity" type="range" min="0" max="100" value="50" oninput="setRefOpacity(this.value)"></label></div>
+          </section>
+        </aside>
+        <section id="animation-panel" hidden aria-label="Reprodução de animação" tabindex="0">
+          <div class="playback-heading"><span class="eyebrow">Animação</span><strong id="active-clip-name">Pose base</strong><span id="animation-state" role="status">Pausado</span><output id="animation-time">0.00 s / 0.00 s</output></div>
+          <div class="playback-controls">
+            <button onclick="animationStart()" class="transport-button" aria-label="Voltar ao início" title="Voltar ao início">↤</button>
+            <button id="animation-play" class="primary-button" onclick="toggleAnimation()">Reproduzir</button>
+            <div class="timeline"><input id="animation-scrub" aria-label="Linha do tempo em segundos" type="range" min="0" max="1" step="0.001" value="0" oninput="seekAnimation(this.value)"><div class="timeline-labels"><span>0 s</span><span id="timeline-end">—</span></div></div>
+            <label class="speed-control" title="Velocidade de reprodução"><select id="animation-speed" aria-label="Velocidade"><option value="0.25">0,25×</option><option value="0.5">0,5×</option><option value="1" selected>1×</option><option value="1.5">1,5×</option><option value="2">2×</option></select></label>
+            <details class="playback-settings"><summary aria-label="Opções de reprodução" title="Opções de reprodução">•••</summary><div class="playback-options"><label>Repetição<select id="animation-repeat"><option value="original">Do arquivo</option><option value="loop">Repetir</option><option value="once">Uma vez</option></select></label><label>Tempo em segundos<input id="animation-position" type="number" min="0" step="0.01" value="0" onchange="seekAnimation(this.value)"></label><div class="step-buttons"><button onclick="animationStep(-0.05)">−0,05 s</button><button onclick="animationStep(0.05)">+0,05 s</button></div><button onclick="animationBase()">Mostrar pose base</button></div></details>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+<!-- Scripts -->
+<script src="vendor/three.min.js"></script>
+<script src="vendor/OrbitControls.js"></script>
+<script src="vendor/GLTFLoader.js"></script>
+<script src="js/bbmodel_parser.js"></script>
+<script src="js/animation_player.js"></script>
+<script src="js/asset_loader.js"></script>
+<script src="js/scene_setup.js"></script>
+<script src="js/reference_plane.js"></script>
+<script src="js/inspector.js"></script>
+<script src="js/forge_session.js"></script>
+<script src="js/viewer_app.js"></script>
+</body></html>

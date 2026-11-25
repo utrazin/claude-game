@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forge Sandbox</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #121214;
+            color: #f4f4f5;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        #app {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        #sandbox-badge {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: rgba(24, 24, 27, 0.88);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(63, 63, 70, 0.6);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 12px;
+            color: #a1a1aa;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        #sandbox-badge strong {
+            color: #ffffff;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div id="sandbox-badge">
+        <strong id="badge-title">Forge Sandbox</strong>
+        <div id="badge-subtitle">Multi-asset Scene</div>
+    </div>
+
+    <div id="app"></div>
+
+    <!-- Scripts from /lib/ -->
+    <script src="/lib/three.min.js"></script>
+    <script src="/lib/OrbitControls.js"></script>
+    <script src="/lib/GLTFLoader.js"></script>
+    <script src="/lib/bbmodel_parser.js"></script>
+    <script src="/lib/animation_player.js"></script>
+    <script src="/lib/asset_loader.js"></script>
+    <script src="/lib/scene_setup.js"></script>
+    <script src="/lib/forge_session.js"></script><script src="/lib/forge_sandbox.js"></script>
+
+    <script>
+        /**
+         * Forge Sandbox Runtime
+         * 
+         * Users and agents have complete freedom to compose any HTML, CSS, Three.js objects
+         * and assemble multi-asset scenes combining BBModels (authoring) and GLBs (exports).
+         * 
+         * API Examples:
+         *   const forge = await ForgeSandbox.create(document.getElementById('app'));
+         *   await forge.add('hero', { position: [0, 0, 0], clip: 'idle' });
+         *   await forge.add('tree', { position: [10, 0, 5], rotationY: 45, scale: 1.2 });
+         *   await forge.add('lamp', { glb: 'lamp/export/lamp.glb', position: [-8, 0, 0] });
+         *   forge.scene; forge.camera; forge.renderer; forge.controls; forge.THREE;
+         *   forge.frame();
+         *   forge.ready();
+         */
+        async function init() {
+            const forge = await ForgeSandbox.create(document.getElementById('app'));
+
+            // Update badge with sandbox info
+            if (forge.project && forge.sandboxName) {
+                document.getElementById('badge-title').textContent = forge.sandboxName;
+                document.getElementById('badge-subtitle').textContent = `Project: ${forge.project}`;
+            }
+
+            // Automatically add the first registered asset in the project if available:
+            const firstAsset = forge.catalog?.assets?.[0]?.id;
+            if (firstAsset) {
+                await forge.add(firstAsset, { position: [0, 0, 0] });
+            }
+
+            // Frame scene and mark ready for browser inspection and automated capture
+            forge.frame();
+            forge.ready();
+        }
+
+        if (document.readyState === 'loading') {
+            window.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    </script>
+</body>
+</html>
