@@ -1,7 +1,7 @@
 class_name Mats
 ## Central material library. Calibrated in look-dev; every 3D asset uses these.
 
-static var _cache := {}
+static var _cache := {}  ## key -> Material
 
 
 static func brass() -> StandardMaterial3D:
@@ -11,6 +11,13 @@ static func brass() -> StandardMaterial3D:
 		m.metallic = 0.82; m.roughness = 0.3
 		m.anisotropy_enabled = true; m.anisotropy = 0.35
 		return m)
+
+
+static func brass_wheel() -> Material:
+	if not _cache.has("brass_wheel"):
+		var m := ShaderMaterial.new(); m.shader = load("res://shaders/brass_wheel.gdshader")
+		_cache["brass_wheel"] = m
+	return _cache["brass_wheel"]
 
 
 static func brass_aged() -> StandardMaterial3D:
@@ -61,7 +68,7 @@ static func lead() -> StandardMaterial3D:
 		return m)
 
 
-static func _mat(key: String, make: Callable) -> StandardMaterial3D:
+static func _mat(key: String, make: Callable) -> StandardMaterial3D:  # cached StandardMaterial3D
 	if not _cache.has(key):
 		_cache[key] = make.call()
 	return _cache[key]

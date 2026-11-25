@@ -81,7 +81,7 @@ Four-panel progression strip of the same scene from the identical camera angle, 
 
 ## AST-UI-001 — Mockup da interface (a Bancada e o Odômetro)
 
-- **Estado:** BRIEFING
+- **Estado:** APPROVED com ressalvas (ver `REVIEW-AST-UI-001.md`)
 - **Objetivo:** definir a linguagem visual da UI antes de consolidá-la. A UI atual do protótipo é placeholder (caixas marrons genéricas) e está REJECTED como acabamento.
 - **Contexto no jogo:** a UI fica sobre a cena 3D da torre (ver AST-CA-001). Ela tem três blocos:
   1. **Odômetro** (canto superior esquerdo): contador grande de Tiques em roletes de latão numerados, abaixo dele a produção por segundo, a Luz Estelar e dois pequenos mostradores circulares: *Amplitude* (ponteiro sobre arco com zona verde-escura ideal) e *Reserva de corda* (ponteiro que desce com o peso).

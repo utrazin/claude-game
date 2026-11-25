@@ -86,7 +86,7 @@ func rebuild(instant := false) -> void:
 			var w := _scene("wheel_%d" % t).instantiate() as Node3D
 			w.rotation.x = PI / 2.0            # GLB axis is +Y; train axis is +Z
 			w.position.z = i * LAYER
-			Mats.apply(w, Mats.brass())
+			Mats.apply(w, Mats.brass_wheel())
 			spins[i].add_child(w); wheels[i] = w
 			_shown_teeth[i] = t
 			if not instant:
