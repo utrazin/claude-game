@@ -14,6 +14,9 @@ func _ready() -> void:
 		Game.eco.from_dict(d)
 		Game.eco.purchased.emit("load", "")
 		Game.eco.changed.emit()
+	if args.has("lookup"):
+		await get_tree().create_timer(0.3).timeout
+		get_tree().current_scene.cam.look_up(true)
 	await get_tree().create_timer(float(args.get("wait", "2.0"))).timeout
 	await RenderingServer.frame_post_draw
 	get_viewport().get_texture().get_image().save_png(args.shot)

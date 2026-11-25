@@ -8,7 +8,8 @@ Estados: BACKLOG · BRIEFING · IN PROGRESS · IN REVIEW · CHANGES REQUESTED ·
 | R-001 | Pesquisa | Mercado idle/incremental | APPROVED | R01 |
 | C-001 | Conceito | Exploração e escolha | APPROVED | C01 → ASTRARIUM |
 | C-002 | Conceito | Visão | APPROVED | V01 |
-| D-001 | Design | GDD v0.1 | IN REVIEW | aguarda game-design-critic |
+| D-001 | Design | GDD v0.1 | CHANGES REQUESTED | CRIT-01: 4 defeitos comprovados; ver D10 |
+| D-003 | Design | GDD v0.2: economia de energia (regulador + trem + peso) | IN PROGRESS | sim primeiro, depois jogo |
 | D-002 | Economia | balance.json + simulador | APPROVED (v0.3) | revalidar após playtest |
 | A-001 | Arte | Key art atmosfera AST-CA-001 | APPROVED (com ressalvas) | docs/art/approved |
 | A-002 | Arte | Estudo de materiais AST-CA-002 | APPROVED | referência oficial |

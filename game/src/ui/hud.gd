@@ -4,6 +4,7 @@ extends CanvasLayer
 
 signal wind_pressed
 signal wind_hold(holding: bool)
+signal look_up(up: bool)
 
 var eco: Economy
 var lbl_ticks: Label
@@ -51,6 +52,12 @@ func _ready() -> void:
 	var hint := _label(tr("WIND_HINT"), 15, C_DIM); hint.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
 	hint.offset_left = -200; hint.offset_right = 200; hint.offset_top = -40; hint.offset_bottom = -16
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER; root.add_child(hint)
+	var sky := Button.new(); sky.toggle_mode = true; sky.text = tr("LOOK_UP")
+	sky.custom_minimum_size = Vector2(200, 48); _style_button(sky, 18)
+	sky.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+	sky.offset_left = 28; sky.offset_right = 228; sky.offset_top = -86; sky.offset_bottom = -38
+	sky.toggled.connect(func(on): look_up.emit(on); sky.text = tr("LOOK_DOWN") if on else tr("LOOK_UP"))
+	root.add_child(sky)
 	eco.changed.connect(_refresh_shop)
 	Game.offline_report.connect(_show_offline)
 	_refresh_shop()

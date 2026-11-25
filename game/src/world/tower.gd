@@ -9,6 +9,7 @@ var crank: Node3D
 var weight: Node3D
 var room: Room
 var comps: Complications
+var sky_chart: SkyChart
 var _awake := 0.0
 var sky_mat: ShaderMaterial
 var _crank_spin := 0.0
@@ -27,11 +28,14 @@ func _ready() -> void:
 	mech.setup(eco)
 	cam.snap()
 	comps = Complications.new(); comps.name = "Complications"; add_child(comps); comps.setup(eco, mech)
+	sky_chart = SkyChart.new(); sky_chart.name = "SkyChart"; add_child(sky_chart); sky_chart.setup(eco, Room.WALL_H)
+	get_viewport().physics_object_picking = true
 	_build_crank()
 	_build_weight()
 	var hud := preload("res://src/ui/hud.gd").new(); hud.name = "HUD"; add_child(hud)
 	hud.wind_pressed.connect(_on_wind)
 	hud.wind_hold.connect(func(h): _holding = h)
+	hud.look_up.connect(func(up): cam.look_up(up))
 
 
 func _build_environment() -> void:
@@ -48,7 +52,7 @@ func _build_environment() -> void:
 	env.ssao_enabled = true; env.ssao_radius = 0.6; env.ssao_intensity = 1.6
 	env.ssil_enabled = true
 	env.glow_enabled = true; env.glow_intensity = 0.25; env.glow_hdr_threshold = 1.4
-	env.fog_enabled = true; env.fog_density = 0.012; env.fog_light_color = Color(0.12, 0.1, 0.12)
+	env.fog_enabled = true; env.fog_density = 0.012; env.fog_light_color = Color(0.12, 0.1, 0.12); env.fog_sky_affect = 0.0
 	env.adjustment_enabled = true; env.adjustment_saturation = 1.05; env.adjustment_contrast = 1.06
 	var we := WorldEnvironment.new(); we.environment = env; add_child(we)
 	var probe := ReflectionProbe.new(); probe.name = "RoomProbe"; probe.size = Vector3(12, 8, 12)

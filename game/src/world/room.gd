@@ -77,7 +77,7 @@ func _dome() -> void:
 	sm.radius = RADIUS; sm.height = RADIUS; sm.is_hemisphere = true; sm.radial_segments = 96; sm.rings = 32
 	glass.mesh = sm; glass.position.y = WALL_H
 	var gm := StandardMaterial3D.new(); gm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	gm.albedo_color = Color(0.35, 0.45, 0.6, 0.10); gm.roughness = 0.05; gm.metallic = 0.2
+	gm.albedo_color = Color(0.35, 0.45, 0.6, 0.035); gm.roughness = 0.05; gm.metallic = 0.2
 	gm.cull_mode = BaseMaterial3D.CULL_DISABLED
 	glass.material_override = gm; glass.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(glass)
