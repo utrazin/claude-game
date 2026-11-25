@@ -15,6 +15,7 @@ var sky_mat: ShaderMaterial
 var _crank_spin := 0.0
 var _hold := 0.0
 var _holding := false
+var _ratchet_t := 0.0
 
 
 func _ready() -> void:
@@ -122,12 +123,18 @@ func _refresh_weight() -> void:
 func _on_wind() -> void:
 	if eco.wind() > 0.0:
 		_crank_spin += TAU * 0.25
+		Audio.wind_click(false)
+	else:
+		Audio.wind_click(true)
 
 
 func _process(delta: float) -> void:
 	if _holding and not eco.is_fully_wound():
 		eco.hand_rate = eco.bal.winding.hold_rate
 		_crank_spin += delta * TAU * 1.2
+		_ratchet_t += delta
+		if _ratchet_t > 0.18:
+			_ratchet_t = 0.0; Audio.wind_click(false)
 	else:
 		eco.hand_rate = 0.0
 	var spin := minf(_crank_spin, delta * TAU * 3.0)
