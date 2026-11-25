@@ -5,7 +5,7 @@ PER_SEC,/s,/s
 EFFICIENCY,Efficiency,Eficiência
 POWER_LOAD,Power %s · Load %s,Força %s · Carga %s
 WIND,Wind,Dar corda
-WIND_HINT,Wind to raise the weight · when full it charges the remontoir,Dê corda para subir o peso · cheio, carrega o remontoir
+WIND_HINT,Wind to raise the weight · when full it charges the remontoir,"Dê corda para subir o peso · com ele cheio, carrega o remontoir"
 OVERWIND,Overwind,Sobrecorda
 BENCH,The Bench,A Bancada
 STAGE_great_wheel,Great Wheel,Roda Grande
