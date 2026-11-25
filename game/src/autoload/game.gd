@@ -61,6 +61,9 @@ func save_game() -> bool:
 
 ## Fresh start: wipes the run and the save (the menu asks for confirmation first).
 func new_game() -> void:
+	var cfg := ConfigFile.new()
+	if cfg.load(Settings.PATH) == OK and cfg.has_section("tutorial"):
+		cfg.erase_section("tutorial"); cfg.save(Settings.PATH)
 	eco.from_dict({})
 	eco.purchased.emit("load", "")
 	eco.changed.emit()

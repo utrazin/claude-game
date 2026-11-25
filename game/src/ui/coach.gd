@@ -29,7 +29,11 @@ func setup(e: Economy, h: Node) -> void:
 	_label.add_theme_color_override("font_color", Color(0.20, 0.13, 0.07)); _label.add_theme_font_size_override("font_size", 21)
 	_label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	_note.add_child(_label); add_child(_note); _note.visible = false
-	eco.purchased.connect(func(k, _i): if k != "load": _bought += 1)
+	eco.purchased.connect(func(k, _i):
+		if k != "load": _bought += 1
+		elif eco.total_ticks == 0.0:          # new game: the tutorial starts over
+			for st in STEPS: _done[st] = false
+			_winds = 0; _bought = 0)
 
 
 func on_wind() -> void:
