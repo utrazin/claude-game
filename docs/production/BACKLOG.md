@@ -10,9 +10,9 @@ Estados: BACKLOG · BRIEFING · IN PROGRESS · IN REVIEW · CHANGES REQUESTED ·
 | C-002 | Conceito | Visão | APPROVED | V01 |
 | D-001 | Design | GDD v0.1 | IN REVIEW | aguarda game-design-critic |
 | D-002 | Economia | balance.json + simulador | APPROVED (v0.3) | revalidar após playtest |
-| A-001 | Arte | Key art atmosfera AST-CA-001 | BRIEFING | com Enzo |
-| A-002 | Arte | Estudo de materiais AST-CA-002 | BRIEFING | com Enzo |
-| A-003 | Arte | Tira de progressão AST-CA-003 | BRIEFING | com Enzo |
+| A-001 | Arte | Key art atmosfera AST-CA-001 | APPROVED (com ressalvas) | docs/art/approved |
+| A-002 | Arte | Estudo de materiais AST-CA-002 | APPROVED | referência oficial |
+| A-003 | Arte | Tira de progressão AST-CA-003 | APPROVED | gerou D09 |
 | A-004 | Arte | Art Bible v1 | BACKLOG | após A-001..003 |
 | A-005 | Arte 3D | Gerador de rodas Blender v1 | IN REVIEW | spike: geometria boa; material e luz não aprovados (latão acobreado, fundo plástico) |
 | T-001 | Técnico | Protótipo do core loop na Godot | IN PROGRESS | |

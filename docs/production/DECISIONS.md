@@ -12,3 +12,4 @@ Decisões aqui não mudam sem uma nova entrada que explique o motivo.
 | D06 | 2026-11-25 | Estrelas dão bônus aditivo, constelação multiplica | estrelas multiplicativas criaram loop de realimentação | GDD §8 |
 | D07 | 2026-11-25 | UI em inglês como base com tradução PT-BR via `tr()` desde o início | público Steam global; o diretor de produto fala português | — |
 | D08 | 2026-11-25 | Sem estética steampunk vitoriana | evitar clichê; referência é horologia astronômica histórica | V01 |
+| D09 | 2026-11-25 | Trem começa horizontal sobre base de nogueira (rodas diminuindo da esquerda para a direita) e ganha estrutura vertical depois | AST-CA-003 painel 2; o zigue-zague do protótipo sobrepõe rodas | REVIEW-AST-CA-001-003 |

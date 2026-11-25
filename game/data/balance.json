@@ -1,6 +1,6 @@
 {
   "_doc": "Fonte \u00fanica de balanceamento. Lida pelo jogo (Godot) e pelo simulador (tools/sim/economy.py). Valores provis\u00f3rios v0.",
-  "base_beat_rate": 0.5,
+  "base_beat_rate": 0.25,
   "click": {
     "ticks_per_wind": 1.0,
     "wind_seconds_of_production": 1.0,
@@ -9,7 +9,7 @@
   },
   "pinion_teeth": 12,
   "teeth_per_level": 6,
-  "base_teeth": 12,
+  "base_teeth": 24,
   "stages": [
     {
       "id": "great_wheel",
@@ -104,6 +104,6 @@
     "mult": 1.0,
     "_doc": "refinamentos visuais a cada 6 n\u00edveis (raios extras, rubis, polimento); sem multiplicador na v0.3"
   },
-  "max_level": 19,
-  "_doc_ratio": "rela\u00e7\u00e3o de um est\u00e1gio = dentes/pinh\u00e3o; dentes = 12 + 6*(n\u00edvel-1), m\u00e1ximo 120 dentes (rela\u00e7\u00e3o 10). O crescimento infinito vem de novos est\u00e1gios, complica\u00e7\u00f5es, estrelas e \u00c9ons."
+  "max_level": 17,
+  "_doc_ratio": "rela\u00e7\u00e3o de um est\u00e1gio = dentes/pinh\u00e3o(12); dentes = 24 + 6*(n\u00edvel-1), de 24 (\u00d72) a 120 dentes (\u00d710) no n\u00edvel 17. O crescimento cont\u00ednuo vem de novos est\u00e1gios, complica\u00e7\u00f5es, estrelas e \u00c9ons."
 }
